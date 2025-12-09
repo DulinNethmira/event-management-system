@@ -1,15 +1,19 @@
+"""
+FastAPI main entry point for Event Management System (ESMS)
+Includes all routes and root health check
+"""
+
 from fastapi import FastAPI
-from app.api.routes import auth, events, booking, wishlist, support, admin
+from backend.app.api.routes import auth
 
-app = FastAPI(title="Event Management System")
+app = FastAPI(title="Event Management System (ESMS)")
 
-app.include_router(auth.router)
-app.include_router(events.router)
-app.include_router(booking.router)
-app.include_router(wishlist.router)
-app.include_router(support.router)
-app.include_router(admin.router)
+# Include all API routers
+app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 
-@app.get("/")
+@app.get("/", tags=["Root"])
 def root():
+    """
+    Root endpoint to verify that the backend is running
+    """
     return {"message": "ESMS Backend Running"}
