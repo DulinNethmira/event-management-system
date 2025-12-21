@@ -1,0 +1,43 @@
+from __future__ import annotations
+
+from datetime import datetime
+from enum import Enum
+
+from sqlalchemy import ForeignKey, Integer, String, DateTime, Enum as SAEnum, Numeric, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from .user import Base, User
+from .event import Event
+
+class BookingStatus(str, Enum):
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED"
+    CANCELLED = "CANCELLED"
+    REFUNDED = "REFUNDED"
+
+class PaymentStatus(str, Enum):
+    UNPAID = "UNPAID"
+    PAID = "PAID"
+    PARTIAL = "PARTIAL"
+    REFUNDED = "REFUNDED"
+
+class Booking(Base):
+    __tablename__ = "bookings"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    event_id: Mapped[int] = mapped_column(ForeignKey("events.id"), index=True)
+    quantity: Mapped[int] = mapped_column(Integer)
+    amount_total: Mapped[float] = mapped_column(Numeric(10, 2))
+    currency: Mapped[str] = mapped_column(String(10), default="USD")
+    status: Mapped[BookingStatus] = mapped_column(String(20), default=BookingStatus.PENDING.value)
+    payment_status: Mapped[PaymentStatus] = mapped_column(String(20), default=PaymentStatus.UNPAID.value)
+    booked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    user: Mapped[User] = relationship("User", back_populates="bookings")
+    event: Mapped[Event] = relationship("Event", back_populates="bookings")
+
+    @property
+    def is_confirmed(self) -> bool:
+        return self.status == BookingStatus.CONFIRMED.value and self.payment_status in {
+            PaymentStatus.PAID.value, PaymentStatus.PARTIAL.value
+        }

@@ -1,7 +1,7 @@
 from pydantic import BaseSettings
 
 class Settings(BaseSettings):
-    DATABASE_URL: str
+    SQLALCHEMY_DATABASE_URL = "postgresql://postgres:password@localhost:5432"
 
     class Config:
         env_file = ".env"
