@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Infinity Events</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8c25f4',
+                        dark: '#191022'
+                    },
+                    fontFamily: {
+                        display: ['Spline Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-dark font-display">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[#1a1023] p-4 flex flex-col justify-between border-r border-white/10">
+            <div class="flex flex-col gap-8">
+                <div class="flex items-center gap-3 px-2">
+                    <img src="https://i.pravatar.cc/40?img=15" alt="Admin" class="w-10 h-10 rounded-full">
+                    <div>
+                        <h1 class="text-white text-base font-medium">Infinity Events</h1>
+                        <p class="text-purple-300 text-sm">Admin Panel</p>
+                    </div>
+                </div>
+                <nav class="flex flex-col gap-2">
+                    <a href="admin-dashboard.html" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <p class="text-sm font-medium">Dashboard</p>
+                    </a>
+                    <a href="admin-events.html" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                        <span class="material-symbols-outlined">event</span>
+                        <p class="text-sm font-medium">Events</p>
+                    </a>
+                    <a href="admin-users.html" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                        <span class="material-symbols-outlined">group</span>
+                        <p class="text-sm font-medium">Users</p>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                        <span class="material-symbols-outlined">confirmation_number</span>
+                        <p class="text-sm font-medium">Tickets</p>
+                    </a>
+                    <a href="admin-reports.html" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                        <span class="material-symbols-outlined">bar_chart</span>
+                        <p class="text-sm font-medium">Reports</p>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                        <span class="material-symbols-outlined">settings</span>
+                        <p class="text-sm font-medium">Settings</p>
+                    </a>
+                </nav>
+            </div>
+            <div class="flex flex-col gap-2">
+                <a href="admin-support.html" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                    <span class="material-symbols-outlined">help_outline</span>
+                    <p class="text-sm font-medium">Support</p>
+                </a>
+                <a href="../index.html" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                    <span class="material-symbols-outlined">logout</span>
+                    <p class="text-sm font-medium">Logout</p>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col overflow-y-auto">
+            <!-- Header -->
+            <header class="flex items-center justify-between px-10 py-3 border-b border-[#362249] bg-[#1a1023]">
+                <h2 class="text-white text-lg font-bold">Dashboard</h2>
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <span class="material-symbols-outlined text-purple-300 absolute left-3 top-1/2 -translate-y-1/2">search</span>
+                        <input type="search" placeholder="Search..." class="w-64 h-10 pl-10 pr-4 bg-[#362249] text-white rounded-lg border-none placeholder:text-purple-300">
+                    </div>
+                    <button class="w-10 h-10 bg-[#362249] rounded-lg text-white/70 hover:text-white hover:bg-primary/30 transition">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </button>
+                    <button class="w-10 h-10 bg-[#362249] rounded-lg text-white/70 hover:text-white hover:bg-primary/30 transition">
+                        <span class="material-symbols-outlined">info</span>
+                    </button>
+                    <img src="https://i.pravatar.cc/40?img=15" alt="User" class="w-10 h-10 rounded-full">
+                </div>
+            </header>
+
+            <div class="p-6 lg:p-10 space-y-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-[#242424]/20 border border-[#4d3168] rounded-xl p-6">
+                        <p class="text-white/80 text-base font-medium mb-2">Total Ticket Sales</p>
+                        <p class="text-white text-2xl font-bold mb-2">$1,234,567</p>
+                        <p class="text-green-400 text-sm font-medium">+5.4%</p>
+                    </div>
+                    <div class="bg-[#242424]/20 border border-[#4d3168] rounded-xl p-6">
+                        <p class="text-white/80 text-base font-medium mb-2">Active Users</p>
+                        <p class="text-white text-2xl font-bold mb-2">8,901</p>
+                        <p class="text-green-400 text-sm font-medium">+2.1%</p>
+                    </div>
+                    <div class="bg-[#242424]/20 border border-[#4d3168] rounded-xl p-6">
+                        <p class="text-white/80 text-base font-medium mb-2">Open Support Tickets</p>
+                        <p class="text-white text-2xl font-bold mb-2">123</p>
+                        <p class="text-orange-400 text-sm font-medium">-1.5%</p>
+                    </div>
+                    <div class="bg-[#242424]/20 border border-[#4d3168] rounded-xl p-6">
+                        <p class="text-white/80 text-base font-medium mb-2">Upcoming Events</p>
+                        <p class="text-white text-2xl font-bold mb-2">15</p>
+                        <p class="text-green-400 text-sm font-medium">+3 this month</p>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="flex gap-3 overflow-x-auto pb-2">
+                    <button class="flex h-8 items-center gap-2 px-4 pr-2 rounded-lg bg-[#362249] hover:bg-primary/50 transition text-white text-sm">
+                        Date: Last 30 Days
+                        <span class="material-symbols-outlined text-base">expand_more</span>
+                    </button>
+                    <button class="flex h-8 items-center gap-2 px-4 pr-2 rounded-lg bg-[#362249] hover:bg-primary/50 transition text-white text-sm">
+                        Event: All
+                        <span class="material-symbols-outlined text-base">expand_more</span>
+                    </button>
+                    <button class="flex h-8 items-center gap-2 px-4 pr-2 rounded-lg bg-[#362249] hover:bg-primary/50 transition text-white text-sm">
+                        Region: All
+                        <span class="material-symbols-outlined text-base">expand_more</span>
+                    </button>
+                </div>
+
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Sales Chart -->
+                    <div class="lg:col-span-2 bg-[#242424]/20 border border-[#4d3168] rounded-xl p-6">
+                        <h3 class="text-white text-base font-medium mb-2">New Member & Ticket Sales Growth</h3>
+                        <p class="text-white/70 text-sm mb-4">Comparison over the last 30 days</p>
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <p class="text-white text-3xl font-bold">2,450 new members</p>
+                            <p class="text-green-400 text-base font-medium">+15.2%</p>
+                        </div>
+                        <div class="h-64">
+                            <svg class="w-full h-full" viewBox="0 0 475 150" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0 109C18 109 18 21 36 21C54 21 54 41 72 41C90 41 90 93 108 93C127 93 127 33 145 33C163 33 163 101 181 101C199 101 199 61 217 61C236 61 236 45 254 45C272 45 272 121 290 121C308 121 308 149 326 149C344 149 344 1 363 1C381 1 381 81 399 81C417 81 417 129 435 129C453 129 453 25 472 25" 
+                                      stroke="#8c25f4" stroke-width="3" fill="none" stroke-linecap="round"/>
+                                <path d="M0 109C18 109 18 21 36 21C54 21 54 41 72 41C90 41 90 93 108 93C127 93 127 33 145 33C163 33 163 101 181 101C199 101 199 61 217 61C236 61 236 45 254 45C272 45 272 121 290 121C308 121 308 149 326 149C344 149 344 1 363 1C381 1 381 81 399 81C417 81 417 129 435 129C453 129 453 25 472 25V150H0V109Z"
+                                      fill="url(#grad1)"/>
+                                <defs>
+                                    <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#8c25f4;stop-opacity:0.4" />
+                                        <stop offset="100%" style="stop-color:#8c25f4;stop-opacity:0" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Support Tickets Chart -->
+                    <div class="bg-[#242424]/20 border border-[#4d3168] rounded-xl p-6">
+                        <h3 class="text-white text-base font-medium mb-2">Support Ticket Status</h3>
+                        <p class="text-white/70 text-sm mb-4">Current open tickets</p>
+                        <div class="flex items-center justify-center h-64 relative">
+                            <svg class="w-48 h-48" viewBox="0 0 36 36">
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
+                                      fill="none" stroke="#fa6f38" stroke-width="3" stroke-dasharray="60, 100"/>
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
+                                      fill="none" stroke="#00FFFF" stroke-width="3" stroke-dasharray="25, 100" stroke-dashoffset="-60"/>
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
+                                      fill="none" stroke="#0bda73" stroke-width="3" stroke-dasharray="15, 100" stroke-dashoffset="-85"/>
+                            </svg>
+                            <div class="absolute flex flex-col items-center">
+                                <span class="text-3xl font-bold text-white">123</span>
+                                <span class="text-sm text-white/70">Total</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-around mt-6">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-[#fa6f38]"></span>
+                                <span class="text-white/80 text-sm">Open</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-[#00FFFF]"></span>
+                                <span class="text-white/80 text-sm">In Progress</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-[#0bda73]"></span>
+                                <span class="text-white/80 text-sm">Closed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tables -->
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <!-- Recent Signups -->
+                    <div class="lg:col-span-3 bg-[#242424]/20 border border-[#4d3168] rounded-xl p-6">
+                        <h3 class="text-white text-base font-medium mb-4">Recent Signups</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-[#4d3168]">
+                                        <th class="py-2 px-3 text-left text-sm font-medium text-white/70">User</th>
+                                        <th class="py-2 px-3 text-left text-sm font-medium text-white/70">Email</th>
+                                        <th class="py-2 px-3 text-left text-sm font-medium text-white/70">Date</th>
+                                        <th class="py-2 px-3 text-left text-sm font-medium text-white/70">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-[#4d3168]/50 hover:bg-primary/10">
+                                        <td class="py-3 px-3 text-sm text-white flex items-center gap-2">
+                                            <img src="https://i.pravatar.cc/32?img=1" alt="User" class="w-8 h-8 rounded-full">
+                                            John Doe
+                                        </td>
+                                        <td class="py-3 px-3 text-sm text-white/80">john.doe@example.com</td>
+                                        <td class="py-3 px-3 text-sm text-white/80">2024-07-21</td>
+                                        <td class="py-3 px-3 text-sm">
+                                            <span class="bg-green-500/20 text-green-400 py-1 px-2 rounded-full text-xs">Verified</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-[#4d3168]/50 hover:bg-primary/10">
+                                        <td class="py-3 px-3 text-sm text-white flex items-center gap-2">
+                                            <img src="https://i.pravatar.cc/32?img=5" alt="User" class="w-8 h-8 rounded-full">
+                                            Jane Smith
+                                        </td>
+                                        <td class="py-3 px-3 text-sm text-white/80">jane.smith@example.com</td>
+                                        <td class="py-3 px-3 text-sm text-white/80">2024-07-20</td>
+                                        <td class="py-3 px-3 text-sm">
+                                            <span class="bg-green-500/20 text-green-400 py-1 px-2 rounded-full text-xs">Verified</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-primary/10">
+                                        <td class="py-3 px-3 text-sm text-white flex items-center gap-2">
+                                            <img src="https://i.pravatar.cc/32?img=8" alt="User" class="w-8 h-8 rounded-full">
+                                            Sam Brown
+                                        </td>
+                                        <td class="py-3 px-3 text-sm text-white/80">sam.brown@example.com</td>
+                                        <td class="py-3 px-3 text-sm text-white/80">2024-07-19</td>
+                                        <td class="py-3 px-3 text-sm">
+                                            <span class="bg-yellow-500/20 text-yellow-400 py-1 px-2 rounded-full text-xs">Pending</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Events -->
+                    <div class="lg:col-span-2 bg-[#242424]/20 border border-[#4d3168] rounded-xl p-6">
+                        <h3 class="text-white text-base font-medium mb-4">Upcoming Events</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4">
+                                <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=80&h=80&fit=crop" alt="Event" class="w-16 h-16 rounded-lg object-cover">
+                                <div class="flex-1">
+                                    <p class="font-medium text-white">Synthwave Fest</p>
+                                    <p class="text-sm text-white/70">2024-08-15 | Miami, FL</p>
+                                </div>
+                                <a href="admin-events.html" class="text-primary hover:text-white transition">
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+                                </a>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=80&h=80&fit=crop" alt="Event" class="w-16 h-16 rounded-lg object-cover">
+                                <div class="flex-1">
+                                    <p class="font-medium text-white">Rock Revival</p>
+                                    <p class="text-sm text-white/70">2024-09-01 | Los Angeles, CA</p>
+                                </div>
+                                <a href="admin-events.html" class="text-primary hover:text-white transition">
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+                                </a>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <img src="https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=80&h=80&fit=crop" alt="Event" class="w-16 h-16 rounded-lg object-cover">
+                                <div class="flex-1">
+                                    <p class="font-medium text-white">Jazz Nights</p>
+                                    <p class="text-sm text-white/70">2024-09-10 | New Orleans, LA</p>
+                                </div>
+                                <a href="admin-events.html" class="text-primary hover:text-white transition">
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

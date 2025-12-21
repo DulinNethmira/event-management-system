@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Infinity Events</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8c25f4',
+                        dark: '#191022'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400; }
+        body { font-family: 'Spline Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-dark font-display text-white">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[#1a1023] p-4 flex flex-col justify-between border-r border-white/10">
+            <div class="flex flex-col gap-8">
+                <div class="flex items-center gap-3 px-2">
+                    <img src="https://i.pravatar.cc/40?img=15" alt="Admin" class="w-10 h-10 rounded-full">
+                    <div>
+                        <h1 class="text-white text-base font-medium">Infinity Events</h1>
+                        <p class="text-purple-300 text-sm">Admin Panel</p>
+                    </div>
+                </div>
+                <nav class="flex flex-col gap-2">
+                    <a href="admin-dashboard.html" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <p class="text-sm font-medium">Dashboard</p>
+                    </a>
+                    <a href="admin-events.html" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                        <span class="material-symbols-outlined">event</span>
+                        <p class="text-sm font-medium">Events</p>
+                    </a>
+                    <a href="admin-users.html" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                        <span class="material-symbols-outlined">group</span>
+                        <p class="text-sm font-medium">Users</p>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                        <span class="material-symbols-outlined">confirmation_number</span>
+                        <p class="text-sm font-medium">Tickets</p>
+                    </a>
+                    <a href="admin-reports.html" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                        <span class="material-symbols-outlined">bar_chart</span>
+                        <p class="text-sm font-medium">Reports</p>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                        <span class="material-symbols-outlined">settings</span>
+                        <p class="text-sm font-medium">Settings</p>
+                    </a>
+                </nav>
+            </div>
+            <div class="flex flex-col gap-2">
+                <a href="admin-support.html" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                    <span class="material-symbols-outlined">help_outline</span>
+                    <p class="text-sm font-medium">Support</p>
+                </a>
+                <a href="index.html" class="flex items-center gap-3 px-3 py-2 text-white/70 hover:bg-primary/20 hover:text-white rounded-lg transition">
+                    <span class="material-symbols-outlined">logout</span>
+                    <p class="text-sm font-medium">Logout</p>
+                </a>
+            </div>
+        </aside>
+
+        <main class="p-8 max-w-7xl mx-auto">
+            <!-- Page Heading -->
+            <div class="flex justify-between items-center mb-6">
+                <p class="text-4xl font-black">Reports</p>
+                <div class="flex items-center gap-2">
+                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 border border-white/20 hover:bg-white/20 transition">
+                        <span class="material-symbols-outlined text-xl">calendar_today</span>
+                        <span>Last 30 Days</span>
+                        <span class="material-symbols-outlined text-xl">arrow_drop_down</span>
+                    </button>
+                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 border border-white/20 hover:bg-white/20 transition">
+                        <span class="material-symbols-outlined text-xl">tune</span>
+                        <span>Filters</span>
+                    </button>
+                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition">
+                        <span class="material-symbols-outlined text-xl">download</span>
+                        <span>Export All</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
+                    <p class="text-white/70 text-base font-medium mb-2">Total Revenue</p>
+                    <p class="text-3xl font-bold mb-2">$1,234,567</p>
+                    <p class="text-green-400 text-sm font-medium flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">arrow_upward</span>+5.2%
+                    </p>
+                </div>
+                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
+                    <p class="text-white/70 text-base font-medium mb-2">Tickets Sold</p>
+                    <p class="text-3xl font-bold mb-2">8,910</p>
+                    <p class="text-green-400 text-sm font-medium flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">arrow_upward</span>+3.1%
+                    </p>
+                </div>
+                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
+                    <p class="text-white/70 text-base font-medium mb-2">New Users</p>
+                    <p class="text-3xl font-bold mb-2">1,234</p>
+                    <p class="text-green-400 text-sm font-medium flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">arrow_upward</span>+1.8%
+                    </p>
+                </div>
+                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
+                    <p class="text-white/70 text-base font-medium mb-2">Open Support Tickets</p>
+                    <p class="text-3xl font-bold mb-2">56</p>
+                    <p class="text-orange-400 text-sm font-medium flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">arrow_downward</span>-0.5%
+                    </p>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Sales Chart -->
+                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
+                    <p class="text-lg font-medium mb-2">Sales & Revenue</p>
+                    <p class="text-4xl font-bold mb-2">$256,789</p>
+                    <div class="flex gap-2 items-center mb-4">
+                        <p class="text-white/60 text-sm">Last 30 Days</p>
+                        <p class="text-green-400 text-sm font-medium flex items-center gap-1">
+                            <span class="material-symbols-outlined text-base">arrow_upward</span>+12.5%
+                        </p>
+                    </div>
+                    <div class="h-56">
+                        <svg class="w-full h-full" viewBox="0 0 478 150" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 109C18 109 18 21 36 21C54 21 54 41 72 41C90 41 90 93 108 93C127 93 127 33 145 33C163 33 163 101 181 101C199 101 199 61 217 61C236 61 236 45 254 45C272 45 272 121 290 121C308 121 308 149 326 149C344 149 344 1 363 1C381 1 381 81 399 81C417 81 417 129 435 129C453 129 453 25 472 25V149H0V109Z" 
+                                  fill="url(#grad1)"/>
+                            <path d="M0 109C18 109 18 21 36 21C54 21 54 41 72 41C90 41 90 93 108 93C127 93 127 33 145 33C163 33 163 101 181 101C199 101 199 61 217 61C236 61 236 45 254 45C272 45 272 121 290 121C308 121 308 149 326 149C344 149 344 1 363 1C381 1 381 81 399 81C417 81 417 129 435 129C453 129 453 25 472 25" 
+                                  stroke="#8c25f4" stroke-width="3" fill="none"/>
+                            <defs>
+                                <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#8c25f4;stop-opacity:0.4" />
+                                    <stop offset="100%" style="stop-color:#8c25f4;stop-opacity:0" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="flex justify-around mt-4">
+                        <p class="text-white/60 text-xs font-bold">Wk 1</p>
+                        <p class="text-white/60 text-xs font-bold">Wk 2</p>
+                        <p class="text-white/60 text-xs font-bold">Wk 3</p>
+                        <p class="text-white/60 text-xs font-bold">Wk 4</p>
+                    </div>
+                </div>
+
+                <!-- Event Performance -->
+                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
+                    <p class="text-lg font-medium mb-2">Event Performance</p>
+                    <p class="text-4xl font-bold mb-2">4,321 Tickets</p>
+                    <div class="flex gap-2 items-center mb-4">
+                        <p class="text-white/60 text-sm">Last 30 Days</p>
+                        <p class="text-green-400 text-sm font-medium flex items-center gap-1">
+                            <span class="material-symbols-outlined text-base">arrow_upward</span>+8.2%
+                        </p>
+                    </div>
+                    <div class="grid grid-flow-col gap-6 items-end justify-items-center h-56">
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="bg-primary/70 rounded-t w-16" style="height: 40%"></div>
+                            <p class="text-white/60 text-xs font-bold">Event A</p>
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="bg-primary/70 rounded-t w-16" style="height: 100%"></div>
+                            <p class="text-white/60 text-xs font-bold">Event B</p>
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="bg-primary/70 rounded-t w-16" style="height: 70%"></div>
+                            <p class="text-white/60 text-xs font-bold">Event C</p>
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="bg-primary/70 rounded-t w-16" style="height: 30%"></div>
+                            <p class="text-white/60 text-xs font-bold">Event D</p>
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="bg-primary/70 rounded-t w-16" style="height: 50%"></div>
+                            <p class="text-white/60 text-xs font-bold">Event E</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl overflow-hidden">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium mb-1">Recent Transactions</h3>
+                    <p class="text-white/60 text-sm">A list of the most recent ticket purchases.</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-black/30">
+                            <tr>
+                                <th class="p-4 font-semibold text-sm text-white/80">Transaction ID</th>
+                                <th class="p-4 font-semibold text-sm text-white/80">User</th>
+                                <th class="p-4 font-semibold text-sm text-white/80">Event</th>
+                                <th class="p-4 font-semibold text-sm text-white/80">Date</th>
+                                <th class="p-4 font-semibold text-sm text-white/80">Amount</th>
+                                <th class="p-4 font-semibold text-sm text-white/80 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/10">
+                            <tr class="hover:bg-white/5">
+                                <td class="p-4 text-sm font-mono">#A2B3C4D5</td>
+                                <td class="p-4 text-sm">John Doe</td>
+                                <td class="p-4 text-sm">Starlight Music Festival</td>
+                                <td class="p-4 text-sm text-white/60">2023-10-26</td>
+                                <td class="p-4 text-sm font-medium">$125.00</td>
+                                <td class="p-4 text-sm text-center">
+                                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-900/50 text-green-300">Completed</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/5">
+                                <td class="p-4 text-sm font-mono">#E6F7G8H9</td>
+                                <td class="p-4 text-sm">Jane Smith</td>
+                                <td class="p-4 text-sm">Cosmic Groove Tour</td>
+                                <td class="p-4 text-sm text-white/60">2023-10-25</td>
+                                <td class="p-4 text-sm font-medium">$85.50</td>
+                                <td class="p-4 text-sm text-center">
+                                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-900/50 text-green-300">Completed</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/5">
+                                <td class="p-4 text-sm font-mono">#I0J1K2L3</td>
+                                <td class="p-4 text-sm">Mike Johnson</td>
+                                <td class="p-4 text-sm">Indie Fest 2023</td>
+                                <td class="p-4 text-sm text-white/60">2023-10-25</td>
+                                <td class="p-4 text-sm font-medium">$250.00</td>
+                                <td class="p-4 text-sm text-center">
+                                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-900/50 text-yellow-300">Pending</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/5">
+                                <td class="p-4 text-sm font-mono">#M4N5O6P7</td>
+                                <td class="p-4 text-sm">Emily Williams</td>
+                                <td class="p-4 text-sm">Starlight Music Festival</td>
+                                <td class="p-4 text-sm text-white/60">2023-10-24</td>
+                                <td class="p-4 text-sm font-medium">$125.00</td>
+                                <td class="p-4 text-sm text-center">
+                                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-900/50 text-red-300">Failed</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

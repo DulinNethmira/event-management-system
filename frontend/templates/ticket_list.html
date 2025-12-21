@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tickets - Infinity Events</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #8c25f4;
+            --secondary-color: #6b21a8;
+            --dark-bg: #0f0118;
+            --dark-light: #1a0b2e;
+        }
+        
+        * { font-family: 'Poppins', sans-serif; }
+        body { background: var(--dark-bg); color: #fff; }
+        
+        .navbar {
+            backdrop-filter: blur(20px);
+            background: rgba(15, 1, 24, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .page-header {
+            padding: 120px 0 60px;
+            background: linear-gradient(135deg, rgba(140, 37, 244, 0.15), rgba(107, 33, 168, 0.15));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+            opacity: 0.1;
+            top: -200px;
+            right: -200px;
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .stats-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stats-box:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 40px rgba(140, 37, 244, 0.3);
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+        
+        .ticket-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        /* Ticket Perforation Effect */
+        .ticket-card::before,
+        .ticket-card::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: var(--dark-bg);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+        }
+        
+        .ticket-card::before {
+            left: -15px;
+        }
+        
+        .ticket-card::after {
+            right: -15px;
+        }
+        
+        .ticket-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 15px 50px rgba(140, 37, 244, 0.4);
+            transform: translateY(-5px);
+        }
+        
+        .ticket-divider {
+            border-left: 2px dashed rgba(255, 255, 255, 0.15);
+            height: 100%;
+            position: absolute;
+            top: 0;
+        }
+        
+        .qr-code-container {
+            width: 140px;
+            height: 140px;
+            background: #fff;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .qr-code-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-upcoming {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+        
+        .status-completed {
+            background: rgba(108, 117, 125, 0.2);
+            color: #6c757d;
+            border: 1px solid rgba(108, 117, 125, 0.3);
+        }
+        
+        .status-cancelled {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+        
+        .status-processing {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(140, 37, 244, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(140, 37, 244, 0.5);
+        }
+        
+        .nav-pills .nav-link {
+            color: #fff;
+            border-radius: 15px;
+            padding: 12px 28px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-pills .nav-link:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-pills .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 5px 20px rgba(140, 37, 244, 0.4);
+        }
+        
+        .event-thumbnail {
+            width: 120px;
+            height: 120px;
+            border-radius: 15px;
+            object-fit: cover;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .info-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+        }
+        
+        .info-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .action-btn:hover {
+            background: rgba(140, 37, 244, 0.2);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .empty-state {
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .empty-icon {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 3.5rem;
+            color: var(--primary-color);
+        }
+        
+        .countdown-timer {
+            background: rgba(140, 37, 244, 0.1);
+            border: 1px solid rgba(140, 37, 244, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .countdown-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+        
+        .seat-info {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <div class="bg-primary rounded-3 p-2 me-2">
+                    <i class="bi bi-music-note-beamed fs-4"></i>
+                </div>
+                <span class="fw-bold">Infinity Events</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="event_list.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="ticket_list.html">My Tickets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="wishlist.html"><i class="bi bi-heart me-1"></i>Wishlist</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="support.html">Support</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#scanQRModal">
+                        <i class="bi bi-qr-code-scan me-2"></i>Scan QR
+                    </button>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                            <img src="https://i.pravatar.cc/40?img=12" alt="User" class="rounded-circle" style="width: 40px; height: 40px;">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="ticket_list.html"><i class="bi bi-ticket me-2"></i>My Tickets</a></li>
+                            <li><a class="dropdown-item" href="wishlist.html"><i class="bi bi-heart me-2"></i>Wishlist</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="login.html"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h1 class="display-3 fw-black mb-3">
+                        <i class="bi bi-ticket-perforated-fill text-primary me-3"></i>
+                        My Tickets
+                    </h1>
+                    <p class="lead text-white-50 mb-0">Manage all your event tickets in one place</p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="stats-box">
+                                <div class="stats-number">7</div>
+                                <small class="text-white-50">Total Tickets</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stats-box">
+                                <div class="stats-number">3</div>
+                                <small class="text-white-50">Upcoming</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="py-5">
+        <div class="container">
+            
+            <!-- Filter Tabs -->
+            <div class="mb-4">
+                <ul class="nav nav-pills justify-content-center" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#upcoming">
+                            <i class="bi bi-calendar-check me-2"></i>Upcoming (3)
+                        </button>
+                    </li>
+                    <li class="nav-item ms-2" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#completed">
+                            <i class="bi bi-check-circle me-2"></i>Completed (3)
+                        </button>
+                    </li>
+                    <li class="nav-item ms-2" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#cancelled">
+                            <i class="bi bi-x-circle me-2"></i>Cancelled (1)
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                
+                <!-- Upcoming Tickets -->
+                <div class="tab-pane fade show active" id="upcoming">
+                    <div class="row g-4">
+                        
+                        <!-- Ticket 1 -->
+                        <div class="col-12">
+                            <div class="ticket-card p-4">
+                                <div class="ticket-divider" style="left: 62%;"></div>
+                                <div class="row align-items-center">
+                                    <!-- Left Section - Ticket Details -->
+                                    <div class="col-lg-7 pe-lg-5">
+                                        <div class="d-flex gap-3 mb-4">
+                                            <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=120&h=120&fit=crop" 
+                                                 alt="Event" class="event-thumbnail">
+                                            <div class="flex-grow-1">
+                                                <span class="status-badge status-upcoming mb-3 d-inline-flex">
+                                                    <i class="bi bi-clock-history"></i>
+                                                    Upcoming
+                                                </span>
+                                                <h3 class="fw-bold mb-2">Summer Rock Festival 2024</h3>
+                                                <div class="d-flex flex-wrap gap-3 mb-3">
+                                                    <div class="d-flex align-items-center text-white-50">
+                                                        <i class="bi bi-calendar3 me-2"></i>
+                                                        <span>August 22, 2024</span>
+                                                    </div>
+                                                    <div class="d-flex align-items-center text-white-50">
+                                                        <i class="bi bi-clock me-2"></i>
+                                                        <span>7:30 PM</span>
+                                                    </div>
+                                                    <div class="d-flex align-items-center text-white-50">
+                                                        <i class="bi bi-geo-alt me-2"></i>
+                                                        <span>Arena Stadium, New York</span>
+                                                    </div>
+                                                </div>
+                                                <div class="seat-info">
+                                                    <i class="bi bi-grid-3x3"></i>
+                                                    <span><strong>Section A</strong> - Row 5, Seats 12-13</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Ticket Info Grid -->
+                                        <div class="row g-3">
+                                            <div class="col-6 col-md-3">
+                                                <div class="info-item">
+                                                    <span class="info-label">Ticket ID</span>
+                                                    <span class="info-value">#TK890234</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="info-item">
+                                                    <span class="info-label">Quantity</span>
+                                                    <span class="info-value">2 Tickets</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="info-item">
+                                                    <span class="info-label">Category</span>
+                                                    <span class="info-value">VIP</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="info-item">
+                                                    <span class="info-label">Total Paid</span>
+                                                    <span class="info-value text-primary">$150.00</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Countdown Timer -->
+                                        <div class="countdown-timer mt-4">
+                                            <small class="text-white-50 d-block mb-2">Event starts in</small>
+                                            <div class="d-flex justify-content-center gap-3">
+                                                <div>
+                                                    <div class="countdown-number">32</div>
+                                                    <small class="text-white-50">Days</small>
+                                                </div>
+                                                <div>
+                                                    <div class="countdown-number">14</div>
+                                                    <small class="text-white-50">Hours</small>
+                                                </div>
+                                                <div>
+                                                    <div class="countdown-number">28</div>
+                                                    <small class="text-white-50">Mins</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Right Section - QR Code & Actions -->
+                                    <div class="col-lg-5 ps-lg-5 mt-4 mt-lg-0 text-center">
+                                        <div class="qr-code-container mx-auto mb-3">
+                                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=TK890234" alt="QR Code">
+                                        </div>
+                                        <p class="text-white-50 small mb-4">
+                                            <i class="bi bi-qr-code me-2"></i>
+                                            Scan this QR code at venue entrance
+                                        </p>
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary" onclick="downloadTicket()">
+                                                <i class="bi bi-download me-2"></i>Download Ticket (PDF)
+                                            </button>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <button class="btn action-btn w-100" onclick="shareTicket()">
+                                                        <i class="bi bi-share me-2"></i>Share
+                                                    </button>
+                                                </div>
+                                                <div class="col-6">
+                                                    <button class="btn action-btn w-100" onclick="printTicket()">
+                                                        <i class="bi bi-printer me-2"></i>Print
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="cancelTicket()">
+                                                <i class="bi bi-x-circle me-2"></i>Request Cancellation
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ticket 2 -->
+                        <div class="col-12">
+                            <div class="ticket-card p-4">
+                                <div class="ticket-divider" style="left: 62%;"></div>
+                                <div class="row align-items-center">
+                                    <div class="col-lg-7 pe-lg-5">
+                                        <div class="d-flex gap-3 mb-4">
+                                            <img src="https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=120&h=120&fit=crop" 
+                                                 alt="Event" class="event-thumbnail">
+                                            <div class="flex-grow-1">
+                                                <span class="status-badge status-upcoming mb-3 d-inline-flex">
+                                                    <i class="bi bi-clock-history"></i>
+                                                    Upcoming
+                                                </span>
+                                                <h3 class="fw-bold mb-2">Jazz Night Live</h3>
+                                                <div class="d-flex flex-wrap gap-3 mb-3">
+                                                    <div class="d-flex align-items-center text-white-50">
+                                                        <i class="bi bi-calendar3 me-2"></i>
+                                                        <span>July 15, 2024</span>
+                                                    </div>
+                                                    <div class="d-flex align-items-center text-white-50">
+                                                        <i class="bi bi-clock me-2"></i>
+                                                        <span>8:00 PM</span>
+                                                    </div>
+                                                    <div class="d-flex align-items-center text-white-50">
+                                                        <i class="bi bi-geo-alt me-2"></i>
+                                                        <span>Blue Note Jazz Club</span>
+                                                    </div>
+                                                </div>
+                                                <div class="seat-info">
+                                                    <i class="bi bi-grid-3x3"></i>
+                                                    <span><strong>Section B</strong> - Row 8, Seat 15</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3">
+                                            <div class="col-6 col-md-3">
+                                                <div class="info-item">
+                                                    <span class="info-label">Ticket ID</span>
+                                                    <span class="info-value">#TK783421</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="info-item">
+                                                    <span class="info-label">Quantity</span>
+                                                    <span class="info-value">1 Ticket</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="info-item">
+                                                    <span class="info-label">Category</span>
+                                                    <span class="info-value">Premium</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="info-item">
+                                                    <span class="info-label">Total Paid</span>
+                                                    <span class="info-value text-primary">$45.00</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-5 ps-lg-5 mt-4 mt-lg-0 text-center">
+                                        <div class="qr-code-container mx-auto mb-3">
+                                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=TK783421" alt="QR Code">
+                                        </div>
+                                        <p class="text-white-50 small mb-4">
+                                            <i class="bi bi-qr-code me-2"></i>
+                                            Scan this QR code at venue entrance
+                                        </p>
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary" onclick="downloadTicket()">
+                                                <i class="bi bi-download me-2"></i>Download Ticket (PDF)
+                                            </button>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <button class="btn action-btn w-100" onclick="shareTicket()">
+                                                        <i class="bi bi-share me-2"></i>Share
+                                                    </button>
+                                                </div>
+                                                <div class="col-6">
+                                                    <button class="btn action-btn w-100" onclick="printTicket()">
+                                                        <i class="bi bi-printer me-2"></i>Print
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="cancelTicket()">
+                                                <i class="bi bi-x-circle me-2"></i>Request Cancellation
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Completed Tickets -->
+                <div class="tab-pane fade" id="completed">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">3 Completed Events</h3>
+                        <p class="text-white-50 mb-4">You've enjoyed 3 amazing events. Check out more!</p>
+                        <a href="event_list.html" class="btn btn-primary btn-lg">
+                            <i class="bi bi-search me-2"></i>Browse More Events
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Cancelled Tickets -->
+                <div class="tab-pane fade" id="cancelled">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="bi bi-x-circle text-danger"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">1 Cancelled Ticket</h3>
+                        <p class="text-white-50 mb-4">Refund has been processed to your account</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- QR Scan Modal -->
+    <div class="modal fade" id="scanQRModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title"><i class="bi bi-qr-code-scan me-2"></i>Scan QR Code</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center py-5">
+                    <i class="bi bi-qr-code-scan" style="font-size: 5rem; color: var(--primary-color);"></i>
+                    <p class="mt-3 text-white-50">Position QR code within the frame</p>
+                    <button class="btn btn-primary mt-3">
+                        <i class="bi bi-camera me-2"></i>Open Camera
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4 border-top mt-5" style="border-color: rgba(255,255,255,0.1) !important;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="text-white-50 mb-0">&copy; 2026 Infinity Events. All rights reserved.</p>
