@@ -1,45 +1,48 @@
-import os
 import smtplib
-from random import randint
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from dotenv import load_dotenv
+from backend.app.api.core.config import settings
 
-load_dotenv()
+# If you want to use a simple SMTP approach (Gmail, Outlook, etc.)
+def send_email_otp(to_email: str, otp_code: str) -> bool:
+    try:
+        # Standard SMTP Setup
+        # Update these env variables in your .env file
+        sender_email = settings.EMAIL_USERNAME
+        sender_password = settings.EMAIL_PASSWORD
+        smtp_server = settings.EMAIL_HOST
+        smtp_port = settings.EMAIL_PORT
 
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "Your Verification Code"
+        message["From"] = sender_email
+        message["To"] = to_email
 
-# Generate a 6-digit numeric OTP.
-def generate_otp() -> str:
-    return str(randint(100000, 999999))
-
-
-class EmailSender:
-    """Handles sending OTP emails with custom sender name and body."""
-
-    def __init__(self, sender_name: str = "ESMS Support") -> None:
-        self.host = os.getenv("EMAIL_HOST")
-        self.port = int(os.getenv("EMAIL_PORT"))
-        self.username = os.getenv("EMAIL_USERNAME")
-        self.password = os.getenv("EMAIL_PASSWORD")
-        self.sender_name = sender_name  # Name shown in recipient inbox
-
-    def send_email(self, to_email: str, subject: str, body: str) -> bool:
+        # Email Body
+        text = f"Your verification code is: {otp_code}"
+        html = f"""
+        <html>
+          <body>
+            <p>Your verification code is: <b>{otp_code}</b></p>
+            <p>This code expires in 5 minutes.</p>
+          </body>
+        </html>
         """
-        Send an email with subject & body.
-        """
-        msg = MIMEMultipart()
-        msg["From"] = f"{self.sender_name} <{self.username}>"
-        msg["To"] = to_email
-        msg["Subject"] = subject
-        msg.attach(MIMEText(body, "plain"))
 
-        try:
-            with smtplib.SMTP(self.host, self.port) as server:
-                server.starttls()
-                server.login(self.username, self.password)
-                server.sendmail(self.username, to_email, msg.as_string())
-            return True
+        part1 = MIMEText(text, "plain")
+        part2 = MIMEText(html, "html")
+        message.attach(part1)
+        message.attach(part2)
 
-        except Exception as exc:
-            print("Email sending failed:", exc)
-            return False
+        # Sending Logic
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, to_email, message.as_string())
+            
+        return True
+
+    except Exception as e:
+        print(f"Email Error: {e}")
+        # Return False so the API knows it failed, but doesn't crash
+        return False

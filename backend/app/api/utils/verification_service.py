@@ -1,37 +1,31 @@
-from typing import Literal
-from backend.app.api.utils.email import EmailSender, generate_otp
-from backend.app.api.utils.whatsapp import WhatsAppSender
+# --- Imports ---
+from backend.app.api.utils.email import send_email_otp 
+from backend.app.api.utils.whatsapp import send_sms_otp
+from backend.app.api.utils.otp_manager import generate_otp, store_otp, verify_otp_logic
 
-
+# --- Verification Service ---
 class VerificationService:
-
-    def __init__(self) -> None:
-        self.email_sender = EmailSender()
-        self.whatsapp_sender = WhatsAppSender()
-
-    def send_verification(
-        self,
-        method: Literal["email", "mobile"],
-        receiver: str
-    ) -> dict:
-
-        otp = generate_otp()
-
+    
+    async def send_verification(self, method: str, receiver: str) -> dict:
+        otp_code = generate_otp()
+        store_otp(receiver, otp_code)
+        
         if method == "email":
-            subject = "Your ESMS Verification Code"
-            body = f"Your verification OTP is: {otp}\n\nThis code expires in 5 minutes."
-
-            status = self.email_sender.send_email(receiver, subject, body)
-
+            sent = send_email_otp(receiver, otp_code)
+            return {
+                "success": sent, 
+                "message": "Email sent" if sent else "Email failed"
+            }
+            
         elif method == "mobile":
-            status = self.whatsapp_sender.send_whatsapp(receiver, otp)
+            # Header: Twilio SMS execution
+            sent = send_sms_otp(receiver, otp_code)
+            return {
+                "success": sent, 
+                "message": "SMS sent" if sent else "SMS failed"
+            }
+            
+        return {"success": False, "message": "Invalid method"}
 
-        else:
-            raise ValueError("Invalid verification method")
-
-        return {
-            "success": status,
-            "otp": otp if status else None,
-            "method": method,
-            "receiver": receiver,
-        }
+    def verify_code(self, receiver: str, otp: str) -> bool:
+        return verify_otp_logic(receiver, otp)
