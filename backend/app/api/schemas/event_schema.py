@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 
 class EventBase(BaseModel):
@@ -11,6 +11,7 @@ class EventBase(BaseModel):
     end_time: datetime
     capacity: int = Field(..., gt=0)
     price: float = Field(..., ge=0)
+    keywords: Optional[List[str]] = Field(default_factory=list)
 
 
 class EventCreate(EventBase):
@@ -25,11 +26,11 @@ class EventUpdate(BaseModel):
     end_time: Optional[datetime] = None
     capacity: Optional[int] = Field(None, gt=0)
     price: Optional[float] = Field(None, ge=0)
+    keywords: Optional[List[str]] = None
 
 
 class EventResponse(EventBase):
     id: int
     organizer_id: int
     created_at: datetime
-
     model_config = ConfigDict(from_attributes=True)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text, ARRAY
 from sqlalchemy.sql import func
 from backend.app.api.core.database import Base
 
@@ -15,4 +15,5 @@ class Event(Base):
     capacity = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)
     organizer_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    keywords = Column(ARRAY(String), nullable=True, default=[])
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
