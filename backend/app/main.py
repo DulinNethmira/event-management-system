@@ -1,15 +1,17 @@
 from fastapi import FastAPI
-from app.api.routes import auth, events, booking, wishlist, support, admin
+from backend.app.api.routes import auth, events
+from backend.app.api.core.database import engine, Base
+from backend.app.api.models.user import User
+from backend.app.api.models.event import Event
 
-app = FastAPI(title="Event Management System")
 
-app.include_router(auth.router)
-app.include_router(events.router)
-app.include_router(booking.router)
-app.include_router(wishlist.router)
-app.include_router(support.router)
-app.include_router(admin.router)
+Base.metadata.create_all(bind=engine)
 
-@app.get("/")
+app = FastAPI(title="Event Management System (EMS)")
+
+app.include_router(auth.router, prefix="/auth", tags=["Auth"])
+app.include_router(events.router, prefix="/events", tags=["Events"])
+
+@app.get("/", tags=["Root"])
 def root():
-    return {"message": "ESMS Backend Running"}
+    return {"message": "EMS Backend Running"}
