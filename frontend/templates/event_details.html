@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Event Details - Summer Rock Festival</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
- <style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summer Rock Festival - Infinity Events</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
         :root {
             --primary-color: #8c25f4;
             --secondary-color: #6b21a8;
@@ -32,30 +34,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-        }
-        
-        .hero-section {
-            min-height: 100vh;
-            background: linear-gradient(135deg, rgba(140, 37, 244, 0.1), rgba(107, 33, 168, 0.1));
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
-            opacity: 0.15;
-            top: -250px;
-            right: -250px;
-            animation: pulse 8s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.15; }
-            50% { transform: scale(1.2); opacity: 0.25; }
         }
         
         .navbar {
@@ -84,93 +62,197 @@
             color: var(--primary-color);
         }
         
-        .feature-card {
+        .event-hero {
+            position: relative;
+            height: 500px;
+            margin-top: 80px;
+            border-radius: 30px;
+            overflow: hidden;
+        }
+        
+        .event-hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .event-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(15, 1, 24, 0.95) 0%, transparent 100%);
+            z-index: 1;
+        }
+        
+        .event-hero-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 2;
+            padding: 40px;
+        }
+        
+        .badge-category {
+            background: var(--primary-color);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .info-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 30px;
             transition: all 0.3s ease;
-            height: 100%;
         }
         
-        .feature-card:hover {
-            transform: translateY(-10px);
+        .info-card:hover {
             background: rgba(255, 255, 255, 0.05);
             border-color: var(--primary-color);
-            box-shadow: 0 20px 50px rgba(140, 37, 244, 0.3);
         }
         
-        .feature-icon {
-            width: 80px;
-            height: 80px;
+        .info-item {
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-icon {
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            border-radius: 20px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            margin-bottom: 20px;
+            margin-right: 20px;
+            font-size: 1.5rem;
+            flex-shrink: 0;
         }
         
-        .event-card {
+        .pricing-card {
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            overflow: hidden;
+            padding: 30px;
             transition: all 0.3s ease;
             height: 100%;
         }
         
-        .event-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 20px 50px rgba(140, 37, 244, 0.4);
+        .pricing-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(140, 37, 244, 0.3);
         }
         
-        .event-card img {
-            height: 250px;
-            object-fit: cover;
-            width: 100%;
+        .pricing-card.featured {
+            border-color: var(--primary-color);
+            background: rgba(140, 37, 244, 0.1);
         }
         
-        .badge-category {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgb(22, 1, 34);
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.875rem;
+        .artist-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
         }
         
-        .stats-section {
-            background: var(--dark-light);
-            padding: 80px 0;
+        .artist-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
         }
         
-        .stat-number {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: var(--primary-color);
-        }
-        
-        .cta-section {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 100px 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 255, 255, 0.1);
+        .artist-card img {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            top: -200px;
-            left: -200px;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid var(--primary-color);
+        }
+        
+        .sticky-booking {
+            position: sticky;
+            top: 100px;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .quantity-control button {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .quantity-control button:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .quantity-control input {
+            width: 60px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            padding: 8px;
+        }
+        
+        .share-btn {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .share-btn:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 0.875rem;
         }
         
         footer {
@@ -187,101 +269,366 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
         }
         
         .social-icon:hover {
             background: var(--primary-color);
             transform: translateY(-5px);
+            color: white;
         }
     </style>
 </head>
-<body class="bg-dark text-light">
-
-  <!-- Event Details -->
-<section class="py-5  cta-section">
-  <div class="container ">
-    <div class="row g-4">
-      <!-- Left Column -->
-      <div class="col-lg-8 mb-3">
-        <h2 class="fw-bold mb-4">Event Information</h2>
-        <p>
-          Get ready for an unforgettable night of rock music featuring top bands and electrifying performances. 
-          The Summer Rock Festival brings together fans from all over to celebrate music, energy, and community.
-        </p>
-        <ul class="list-unstyled mt-4">
-          <li class="mb-3">
-            <i class="bi bi-calendar3 me-2"></i> <strong>Date:</strong> August 15, 2024
-          </li>
-          <li class="mb-3">
-            <i class="bi bi-geo-alt me-2"></i> <strong>Location:</strong> Arena Stadium
-          </li>
-          <li class="mb-3">
-            <i class="bi bi-cash-stack me-2"></i> <strong>Price:</strong> $75
-          </li>
-          <li class="mb-3">
-            <i class="bi bi-music-note-beamed me-2"></i> <strong>Category:</strong> Rock
-          </li>
-        </ul>
-        <h4 class="fw-bold mt-5 mb-3">About the Event</h4>
-        <p>
-          Experience live performances from renowned rock bands, food stalls, merchandise booths, and more. 
-          This festival is the ultimate destination for rock enthusiasts looking to enjoy music in a vibrant atmosphere.
-        </p>
-      </div>
-
-      <!-- Right Column -->
-      <div class="col-lg-4">
-        <!-- Booking Card -->
-        <div class="card bg-secondary text-light mb-4">
-          <div class="card-body">
-            <h4 class="fw-bold mb-3">Book Your Tickets</h4>
-            <p>Secure your spot now and be part of this amazing event.</p>
-            <a href="#" class="btn btn-primary w-100 mb-3">Book Now</a>
-            <a href="event_list.html" class="btn btn-outline-light w-100">Back to Events</a>
-          </div>
-        </div>
-
-        <!-- Line-Up Card -->
-        <div class="card bg-secondary text-light">
-          <div class="card-body">
-            <h4 class="fw-bold mb-3">Artist Line-Up</h4>
-            <div class="d-flex align-items-center mb-3">
-              <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&h=80&fit=crop" 
-                   alt="Band 1" class="rounded-circle me-3" width="60" height="60">
-              <div>
-                <strong>The Rockers</strong><br>
-                <small class="text-white-50">Headliner Band</small>
-              </div>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <div class="bg-primary rounded-3 p-2 me-2">
+                    <i class="bi bi-music-note-beamed fs-4"></i>
+                </div>
+                <span class="fw-bold">Infinity Events</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="event_list.html">Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ticket_list.html">My Tickets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="wishlist.html">
+                            <i class="bi bi-heart me-1"></i>Wishlist
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="support.html">Support</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="signup.html" class="btn btn-outline-light btn-sm">Sign In</a>
+                    <a href="login.html" class="btn btn-outline-light btn-sm">Login</a>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                            <img src="https://i.pravatar.cc/40?img=12" alt="User" class="rounded-circle" style="width: 40px; height: 40px;">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="ticket_list.html"><i class="bi bi-ticket me-2"></i>My Tickets</a></li>
+                            <li><a class="dropdown-item" href="wishlist.html"><i class="bi bi-heart me-2"></i>Wishlist</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="admin/admin_login.html"><i class="bi bi-speedometer2 me-2"></i>Admin Panel</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="login.html"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="d-flex align-items-center mb-3">
-              <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=80&h=80&fit=crop" 
-                   alt="Band 2" class="rounded-circle me-3" width="60" height="60">
-              <div>
-                <strong>Electric Vibes</strong><br>
-                <small class="text-white-50">Special Guest</small>
-              </div>
-            </div>
-            <div class="d-flex align-items-center">
-              <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&h=80&fit=crop" 
-                   alt="Band 3" class="rounded-circle me-3" width="60" height="60">
-              <div>
-                <strong>Midnight Echo</strong><br>
-                <small class="text-white-50">Opening Act</small>
-              </div>
-            </div>
-          </div>
         </div>
+    </nav>
 
-        <!-- Category Badge -->
-        <div class="mt-4">
-          <span class="badge-category">Rock</span>
+    <!-- Event Hero -->
+    <div class="container mt-5">
+        <div class="event-hero" data-aos="fade-up">
+            <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1200&h=500&fit=crop" alt="Summer Rock Festival">
+            <div class="event-hero-content">
+                <span class="badge-category">Rock Festival</span>
+                <h1 class="display-3 fw-bold mb-3">Summer Rock Festival 2024</h1>
+                <div class="d-flex flex-wrap gap-4 text-white-50">
+                    <div>
+                        <i class="bi bi-calendar3 me-2"></i>
+                        <span>August 15, 2024</span>
+                    </div>
+                    <div>
+                        <i class="bi bi-clock me-2"></i>
+                        <span>6:00 PM - 11:00 PM</span>
+                    </div>
+                    <div>
+                        <i class="bi bi-geo-alt me-2"></i>
+                        <span>Arena Stadium, Downtown</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-</section>
 
-  <!-- Footer -->
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="row g-4">
+            <!-- Left Column - Event Details -->
+            <div class="col-lg-8">
+                <!-- About Section -->
+                <div class="info-card mb-4" data-aos="fade-up">
+                    <h2 class="fw-bold mb-4">About This Event</h2>
+                    <p class="text-white-50 mb-4">
+                        Get ready for the most electrifying rock experience of the summer! The Summer Rock Festival 2024 brings together the biggest names in rock music for an unforgettable night of powerful performances, incredible energy, and pure rock 'n' roll spirit.
+                    </p>
+                    <p class="text-white-50 mb-4">
+                        Experience five hours of non-stop rock music featuring multiple stages, food trucks, merchandise stands, and an atmosphere that will leave you breathless. From classic rock anthems to modern rock hits, this festival celebrates everything we love about rock music.
+                    </p>
+                    <p class="text-white-50">
+                        Whether you're a die-hard rock fan or just discovering the genre, this festival promises an experience you'll never forget. Bring your friends, wear your favorite band tee, and get ready to rock!
+                    </p>
+                </div>
+
+                <!-- Event Highlights -->
+                <div class="info-card mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="fw-bold mb-4">Event Highlights</h3>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-check-circle-fill text-primary fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-2">Multiple Stages</h5>
+                                    <p class="text-white-50 mb-0">Three different stages featuring various rock genres</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-check-circle-fill text-primary fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-2">Food & Drinks</h5>
+                                    <p class="text-white-50 mb-0">Gourmet food trucks and beverage stations</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-check-circle-fill text-primary fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-2">Merchandise</h5>
+                                    <p class="text-white-50 mb-0">Exclusive festival merchandise and band gear</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-check-circle-fill text-primary fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-2">VIP Experience</h5>
+                                    <p class="text-white-50 mb-0">Premium viewing areas and exclusive perks</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Artists -->
+                <div class="info-card mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <h3 class="fw-bold mb-4">Featured Artists</h3>
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <div class="artist-card">
+                                <img src="https://i.pravatar.cc/100?img=33" alt="Artist">
+                                <h6 class="fw-bold mb-1">The Rockers</h6>
+                                <small class="text-white-50">Headliner</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="artist-card">
+                                <img src="https://i.pravatar.cc/100?img=34" alt="Artist">
+                                <h6 class="fw-bold mb-1">Electric Soul</h6>
+                                <small class="text-white-50">Main Stage</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="artist-card">
+                                <img src="https://i.pravatar.cc/100?img=35" alt="Artist">
+                                <h6 class="fw-bold mb-1">Storm Riders</h6>
+                                <small class="text-white-50">Main Stage</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="artist-card">
+                                <img src="https://i.pravatar.cc/100?img=36" alt="Artist">
+                                <h6 class="fw-bold mb-1">Rebel Hearts</h6>
+                                <small class="text-white-50">Side Stage</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Venue Information -->
+                <div class="info-card mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <h3 class="fw-bold mb-4">Venue Information</h3>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Location</h6>
+                            <p class="text-white-50 mb-0">Arena Stadium, 123 Rock Avenue, Downtown</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-car-front-fill"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Parking</h6>
+                            <p class="text-white-50 mb-0">Ample parking available at venue and nearby lots</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-info-circle-fill"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Age Restriction</h6>
+                            <p class="text-white-50 mb-0">All ages welcome. Under 16 must be accompanied by adult</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div data-aos="fade-up" data-aos-delay="400">
+                    <h4 class="fw-bold mb-3">Tags</h4>
+                    <div>
+                        <span class="tag">#RockFestival</span>
+                        <span class="tag">#LiveMusic</span>
+                        <span class="tag">#SummerVibes</span>
+                        <span class="tag">#OutdoorEvent</span>
+                        <span class="tag">#RockAndRoll</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Booking Card -->
+            <div class="col-lg-4">
+                <div class="sticky-booking">
+                    <!-- Booking Card -->
+                    <div class="info-card mb-4" data-aos="fade-up">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div>
+                                <h3 class="fw-bold mb-0 gradient-text">RS 2,500.00</h3>
+                                <small class="text-white-50">per ticket</small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="#" class="share-btn" title="Add to Wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </a>
+                                <a href="#" class="share-btn" title="Share Event">
+                                    <i class="bi bi-share"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Select Ticket Type</label>
+                            <select class="form-select bg-dark text-white border-secondary" id="ticketType" onchange="updatePrice()">
+                                <option value="2500" selected>General Admission - RS 2,500</option>
+                                <option value="5000">VIP Pass - RS 5,000</option>
+                                <option value="8500">Platinum Package - RS 8,500</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Quantity</label>
+                            <div class="quantity-control">
+                                <button type="button" onclick="decreaseQty()">-</button>
+                                <input type="number" id="quantity" value="1" min="1" max="10" readonly>
+                                <button type="button" onclick="increaseQty()">+</button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-white-50">Subtotal</span>
+                            <span class="fw-bold" id="subtotal">RS 2,500.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-white-50">Service Fee</span>
+                            <span class="fw-bold" id="serviceFee">RS 250.00</span>
+                        </div>
+                        <hr class="border-secondary">
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="fw-bold">Total</span>
+                            <span class="fw-bold fs-4 gradient-text" id="total">RS 2,750.00</span>
+                        </div>
+
+                        <button class="btn btn-primary w-100 mb-3">
+                            <i class="bi bi-ticket-perforated me-2"></i>
+                            Book Now
+                        </button>
+                        <small class="text-white-50 d-block text-center">
+                            <i class="bi bi-shield-check me-1"></i>
+                            Secure payment guaranteed
+                        </small>
+                    </div>
+
+                    <!-- Ticket Availability -->
+                    <div class="info-card" data-aos="fade-up" data-aos-delay="100">
+                        <h5 class="fw-bold mb-3">Ticket Types Available</h5>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>General Admission</span>
+                                <span class="text-success fw-bold">Available</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-success" style="width: 65%"></div>
+                            </div>
+                            <small class="text-white-50">325 tickets remaining</small>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>VIP Pass</span>
+                                <span class="text-warning fw-bold">Limited</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-warning" style="width: 25%"></div>
+                            </div>
+                            <small class="text-white-50">12 tickets remaining</small>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Platinum Package</span>
+                                <span class="text-danger fw-bold">Sold Out</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-danger" style="width: 100%"></div>
+                            </div>
+                            <small class="text-white-50">0 tickets remaining</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Similar Events -->
+    <section class="py-5 my-5">
+        <div class="container">
+            <h2 class="display-5 fw-bold mb-4" data-aos="fade-up">Similar Events You Might Like</h2>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="info-card">
+                        <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=200&fit=crop" 
+                             alt="Event" class="w-100 rounded-3 mb-3" style="height: 200px; object-fit: cover;">
+                        <span class="badge-category">Jazz</span>
+                        <h5 class="fw-bold mb-2">Jazz Night Live</h5>
+                        <div class="d-flex align-items-center text-white-50 mb-2">
+                            <i class="bi bi-calendar3 me-2"></i>
+                            <small>July 22, 2024</small>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 mb-0 gradient-text">RS 2,800.00</span>
+                            <a href="#" class="btn btn-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="py-5">
         <div class="container">
             <div class="row g-4">
@@ -312,7 +659,7 @@
                     <h5 class="fw-bold mb-3">Company</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="about.html" class="text-white-50 text-decoration-none">About Us</a></li>
-                        <li class="mb-2"><a href="events.html" class="text-white-50 text-decoration-none">Events</a></li>
+                        <li class="mb-2"><a href="event_list.html" class="text-white-50 text-decoration-none">Events</a></li>
                         <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Careers</a></li>
                         <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Blog</a></li>
                     </ul>
@@ -347,12 +694,120 @@
             </div>
             <hr class="my-4 border-secondary">
             <div class="text-center text-white-50">
-                <p class="mb-0">&copy; 2024 Infinity Events. All rights reserved. Made with </i> for music lovers</p>
+                <p class="mb-0">&copy; 2024 Infinity Events. All rights reserved. Made with ❤️ for music lovers</p>
             </div>
         </div>
     </footer>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Quantity Control Functions
+        function increaseQty() {
+            const qtyInput = document.getElementById('quantity');
+            let currentQty = parseInt(qtyInput.value);
+            if (currentQty < 10) {
+                qtyInput.value = currentQty + 1;
+                updatePrice();
+            }
+        }
+
+        function decreaseQty() {
+            const qtyInput = document.getElementById('quantity');
+            let currentQty = parseInt(qtyInput.value);
+            if (currentQty > 1) {
+                qtyInput.value = currentQty - 1;
+                updatePrice();
+            }
+        }
+
+        // Update Price Calculations
+        function updatePrice() {
+            const ticketType = document.getElementById('ticketType');
+            const quantity = document.getElementById('quantity');
+            const subtotalEl = document.getElementById('subtotal');
+            const serviceFeeEl = document.getElementById('serviceFee');
+            const totalEl = document.getElementById('total');
+
+            const ticketPrice = parseFloat(ticketType.value);
+            const qty = parseInt(quantity.value);
+            
+            const subtotal = ticketPrice * qty;
+            const serviceFee = subtotal * 0.1; // 10% service fee
+            const total = subtotal + serviceFee;
+
+            subtotalEl.textContent = `RS ${subtotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            serviceFeeEl.textContent = `RS ${serviceFee.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            totalEl.textContent = `RS ${total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+
+        // Wishlist Toggle
+        document.querySelector('.share-btn[title="Add to Wishlist"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            const icon = this.querySelector('i');
+            if (icon.classList.contains('bi-heart')) {
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill');
+                this.style.color = '#8c25f4';
+            } else {
+                icon.classList.remove('bi-heart-fill');
+                icon.classList.add('bi-heart');
+                this.style.color = '';
+            }
+        });
+
+        // Share Event
+        document.querySelector('.share-btn[title="Share Event"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Summer Rock Festival 2024',
+                    text: 'Check out this amazing event!',
+                    url: window.location.href
+                });
+            } else {
+                alert('Share link: ' + window.location.href);
+            }
+        });
+    </script>
 </body>
 </html>
+                            <span class="h5 mb-0 gradient-text">RS 1,500.00</span>
+                            <a href="#" class="btn btn-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="info-card">
+                        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=200&fit=crop" 
+                             alt="Event" class="w-100 rounded-3 mb-3" style="height: 200px; object-fit: cover;">
+                        <span class="badge-category">Electronic</span>
+                        <h5 class="fw-bold mb-2">Electronic Beats</h5>
+                        <div class="d-flex align-items-center text-white-50 mb-2">
+                            <i class="bi bi-calendar3 me-2"></i>
+                            <small>September 5, 2024</small>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 mb-0 gradient-text">RS 3,500.00</span>
+                            <a href="#" class="btn btn-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="info-card">
+                        <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=200&fit=crop" 
+                             alt="Event" class="w-100 rounded-3 mb-3" style="height: 200px; object-fit: cover;">
+                        <span class="badge-category">Pop</span>
+                        <h5 class="fw-bold mb-2">Pop Extravaganza</h5>
+                        <div class="d-flex align-items-center text-white-50 mb-2">
+                            <i class="bi bi-calendar3 me-2"></i>
+                            <small>October 12, 2024</small>
+                        </div>
