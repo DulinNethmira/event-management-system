@@ -26,7 +26,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         
         /* Animated Background */
@@ -130,6 +130,11 @@
             box-shadow: 0 15px 40px rgba(140, 37, 244, 0.5);
         }
         
+        .btn-primary:disabled {
+            opacity: 0.7;
+            transform: none;
+        }
+        
         /* Social Login Buttons */
         .social-btn {
             background: rgba(255, 255, 255, 0.05);
@@ -143,6 +148,7 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
+            cursor: pointer;
         }
         
         .social-btn:hover {
@@ -168,45 +174,6 @@
             background: rgba(24, 119, 242, 0.15);
             border-color: #1877f2;
             box-shadow: 0 10px 30px rgba(24, 119, 242, 0.3);
-        }
-        
-        .btn-twitter {
-            border-color: rgba(29, 155, 240, 0.3);
-        }
-        
-        .btn-twitter:hover {
-            background: rgba(29, 155, 240, 0.15);
-            border-color: #1d9bf0;
-            box-shadow: 0 10px 30px rgba(29, 155, 240, 0.3);
-        }
-        
-        .btn-apple {
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-        
-        .btn-apple:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-        
-        .btn-github {
-            border-color: rgba(88, 96, 105, 0.3);
-        }
-        
-        .btn-github:hover {
-            background: rgba(88, 96, 105, 0.15);
-            border-color: #586069;
-            box-shadow: 0 10px 30px rgba(88, 96, 105, 0.3);
-        }
-        
-        .btn-microsoft {
-            border-color: rgba(0, 120, 212, 0.3);
-        }
-        
-        .btn-microsoft:hover {
-            background: rgba(0, 120, 212, 0.15);
-            border-color: #0078d4;
-            box-shadow: 0 10px 30px rgba(0, 120, 212, 0.3);
         }
         
         .divider {
@@ -255,6 +222,7 @@
             cursor: pointer;
             color: rgba(255, 255, 255, 0.5);
             transition: color 0.3s ease;
+            z-index: 10;
         }
         
         .password-toggle:hover {
@@ -280,6 +248,29 @@
             color: #28a745;
             font-size: 1.5rem;
         }
+
+        .error-message {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 30px 25px;
+            }
+            
+            .social-icons-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -296,6 +287,12 @@
                 <h2 class="fw-bold mb-2">Welcome Back!</h2>
                 <p class="text-white-50">Sign in to continue your musical journey</p>
             </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="error-message">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <span id="errorText"></span>
+            </div>
             
             <!-- Email/Password Login Form -->
             <form id="loginForm">
@@ -306,7 +303,7 @@
                             <span class="input-group-text border-end-0" style="border-radius: 15px 0 0 15px;">
                                 <i class="bi bi-envelope"></i>
                             </span>
-                            <input type="email" class="form-control border-start-0 ps-0" placeholder="Enter your email" required style="border-radius: 0 15px 15px 0;">
+                            <input type="email" id="emailInput" class="form-control border-start-0 ps-0" placeholder="Enter your email" required style="border-radius: 0 15px 15px 0;">
                         </div>
                     </div>
                 </div>
@@ -331,7 +328,7 @@
                             Remember me
                         </label>
                     </div>
-                    <a href="froget_password.html" class="text-primary text-decoration-none fw-semibold">Forgot Password?</a>
+                    <a href="forgot_password.html" class="text-primary text-decoration-none fw-semibold">Forgot Password?</a>
                 </div>
                 
                 <button type="submit" class="btn btn-primary w-100 mb-3">
@@ -362,8 +359,6 @@
                     <i class="bi bi-facebook" style="font-size: 1.3rem; color: #1877f2;"></i>
                     Facebook
                 </button>
-                
-                
             </div>
             
             <!-- Security Badge -->
@@ -405,9 +400,40 @@
             this.classList.toggle('bi-eye-slash');
         });
         
+        // Form Validation
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorDiv.classList.add('show');
+            
+            setTimeout(() => {
+                errorDiv.classList.remove('show');
+            }, 5000);
+        }
+
         // Form Submit Handler
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            
+            // Validation
+            if (!validateEmail(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters');
+                return;
+            }
             
             // Show loading state
             const btn = this.querySelector('button[type="submit"]');
@@ -417,6 +443,9 @@
             
             // Simulate API call
             setTimeout(() => {
+                // In production, replace with actual authentication
+                console.log('Login attempt:', { email, password: '***' });
+                
                 // Redirect to dashboard or home
                 window.location.href = 'index.html';
             }, 1500);
@@ -435,37 +464,12 @@
             // window.location.href = '/auth/facebook';
         }
         
-        function loginWithTwitter() {
-            console.log('Login with Twitter');
-            showLoginMessage('Twitter');
-            // window.location.href = '/auth/twitter';
-        }
-        
-        function loginWithApple() {
-            console.log('Login with Apple');
-            showLoginMessage('Apple');
-            // window.location.href = '/auth/apple';
-        }
-        
-        function loginWithGithub() {
-            console.log('Login with GitHub');
-            showLoginMessage('GitHub');
-            // window.location.href = '/auth/github';
-        }
-        
-        function loginWithMicrosoft() {
-            console.log('Login with Microsoft');
-            showLoginMessage('Microsoft');
-            // window.location.href = '/auth/microsoft';
-        }
-        
         function showLoginMessage(provider) {
-            // Create toast notification
             const toast = document.createElement('div');
             toast.className = 'position-fixed top-0 start-50 translate-middle-x mt-3';
             toast.style.zIndex = '9999';
             toast.innerHTML = `
-                <div class="alert alert-info alert-dismissible fade show" role="alert" style="background: rgba(13, 202, 240, 0.2); border: 1px solid rgba(13, 202, 240, 0.5); color: #fff;">
+                <div class="alert alert-info alert-dismissible fade show" role="alert" style="background: rgba(13, 202, 240, 0.2); border: 1px solid rgba(13, 202, 240, 0.5); color: #fff; border-radius: 15px;">
                     <i class="bi bi-info-circle me-2"></i>
                     Redirecting to ${provider} login...
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
@@ -473,7 +477,6 @@
             `;
             document.body.appendChild(toast);
             
-            // Remove after 3 seconds
             setTimeout(() => {
                 toast.remove();
             }, 3000);

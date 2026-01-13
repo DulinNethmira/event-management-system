@@ -20,7 +20,14 @@
         }
         
         * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
+        }
+        
+        html {
+            scroll-behavior: smooth;
         }
         
         body {
@@ -36,11 +43,101 @@
             background-clip: text;
         }
         
+        /* Navbar Styles */
+        .navbar {
+            backdrop-filter: blur(20px);
+            background: rgba(15, 1, 24, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-2px);
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #fff;
+            background: rgba(140, 37, 244, 0.2);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            border-color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .dropdown-menu {
+            background: rgba(15, 1, 24, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 10px;
+            margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .dropdown-item {
+            color: #fff;
+            border-radius: 10px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+            margin: 3px 0;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(140, 37, 244, 0.2);
+            color: #fff;
+        }
+
+        .dropdown-item.text-danger:hover {
+            background: rgba(220, 53, 69, 0.2);
+        }
+
+        .dropdown-divider {
+            border-color: rgba(255, 255, 255, 0.1);
+            margin: 8px 0;
+        }
+        
+        /* Hero Section */
         .hero-section {
             min-height: 100vh;
             background: linear-gradient(135deg, rgba(140, 37, 244, 0.1), rgba(107, 33, 168, 0.1));
             position: relative;
             overflow: hidden;
+            padding-top: 120px;
+            display: flex;
+            align-items: center;
         }
         
         .hero-section::before {
@@ -54,30 +151,66 @@
             right: -250px;
             animation: pulse 8s ease-in-out infinite;
         }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--secondary-color) 0%, transparent 70%);
+            opacity: 0.1;
+            bottom: -200px;
+            left: -200px;
+            animation: pulse 10s ease-in-out infinite reverse;
+        }
         
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.15; }
-            50% { transform: scale(1.2); opacity: 0.25; }
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 0.15; 
+            }
+            50% { 
+                transform: scale(1.2); 
+                opacity: 0.25; 
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-image {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-image img {
+            border-radius: 25px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
         }
         
-        .navbar {
-            backdrop-filter: blur(20px);
-            background: rgba(15, 1, 24, 0.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
+        /* Buttons */
         .btn-primary {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             border: none;
             padding: 12px 30px;
             font-weight: 600;
+            border-radius: 12px;
             transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(140, 37, 244, 0.3);
         }
         
         .btn-primary:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(140, 37, 244, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(140, 37, 244, 0.5);
+        }
+
+        .btn-outline-light {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            transition: all 0.3s ease;
+            border-radius: 10px;
         }
         
         .btn-outline-light:hover {
@@ -86,13 +219,14 @@
             color: var(--primary-color);
         }
         
+        /* Feature Cards */
         .feature-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 30px;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             height: 100%;
         }
         
@@ -113,26 +247,38 @@
             justify-content: center;
             font-size: 2rem;
             margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
         }
         
+        /* Event Cards */
         .event-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             height: 100%;
         }
         
         .event-card:hover {
-            transform: scale(1.05);
+            transform: translateY(-10px);
             box-shadow: 0 20px 50px rgba(140, 37, 244, 0.4);
+            border-color: var(--primary-color);
         }
         
         .event-card img {
             height: 250px;
             object-fit: cover;
             width: 100%;
+            transition: all 0.4s ease;
+        }
+
+        .event-card:hover img {
+            transform: scale(1.1);
         }
         
         .badge-category {
@@ -144,19 +290,26 @@
             border-radius: 50px;
             font-weight: 600;
             font-size: 0.875rem;
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(140, 37, 244, 0.4);
         }
         
+        /* Stats Section */
         .stats-section {
             background: var(--dark-light);
             padding: 80px 0;
+            position: relative;
         }
         
         .stat-number {
             font-size: 3.5rem;
             font-weight: 800;
             color: var(--primary-color);
+            line-height: 1;
+            margin-bottom: 10px;
         }
         
+        /* CTA Section */
         .cta-section {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             padding: 100px 0;
@@ -173,8 +326,27 @@
             border-radius: 50%;
             top: -200px;
             left: -200px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            bottom: -150px;
+            right: -150px;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
         
+        /* Footer */
         footer {
             background: var(--dark-light);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -189,11 +361,163 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+            text-decoration: none;
+            color: #fff;
         }
         
         .social-icon:hover {
             background: var(--primary-color);
             transform: translateY(-5px);
+            color: #fff;
+        }
+
+        footer a {
+            transition: all 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--primary-color) !important;
+            padding-left: 5px;
+        }
+
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: rgba(15, 1, 24, 0.98);
+                padding: 20px;
+                border-radius: 15px;
+                margin-top: 15px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .nav-link {
+                padding: 12px 15px;
+                margin: 5px 0;
+            }
+
+            .navbar .d-flex {
+                margin-top: 15px;
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+            }
+
+            .navbar .d-flex .btn {
+                width: 100%;
+                margin: 0;
+            }
+
+            .navbar .dropdown {
+                width: 100%;
+            }
+
+            .navbar .dropdown-toggle {
+                width: 100%;
+                justify-content: center;
+                padding: 10px;
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 10px;
+            }
+
+            .dropdown-menu {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: auto;
+                padding: 100px 0 60px;
+            }
+
+            .display-1 {
+                font-size: 2.5rem;
+                line-height: 1.2;
+            }
+
+            .display-3 {
+                font-size: 2rem;
+            }
+
+            .display-4 {
+                font-size: 1.75rem;
+            }
+
+            .lead {
+                font-size: 1rem;
+            }
+
+            .hero-image {
+                margin-top: 40px;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+
+            .feature-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .feature-card {
+                padding: 25px;
+            }
+
+            .event-card img {
+                height: 200px;
+            }
+
+            .cta-section {
+                padding: 60px 0;
+            }
+
+            .stats-section {
+                padding: 60px 0;
+            }
+
+            .btn-lg {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+
+            .brand-icon {
+                width: 35px;
+                height: 35px;
+            }
+
+            .display-1 {
+                font-size: 2rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .event-card h4 {
+                font-size: 1.1rem;
+            }
+
+            .feature-card h4 {
+                font-size: 1.1rem;
+            }
+
+            .social-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 0.9rem;
+            }
+
+            .badge-category {
+                padding: 6px 15px;
+                font-size: 0.75rem;
+            }
         }
     </style>
 </head>
@@ -202,18 +526,18 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="index.html">
-                <div class="bg-primary rounded-3 p-2 me-2">
-                    <i class="bi bi-music-note-beamed fs-4"></i>
+                <div class="bg-primary rounded-3 p-2 me-2 brand-icon">
+                    <i class="bi bi-music-note-beamed fs-5"></i>
                 </div>
                 <span class="fw-bold">Infinity Events</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
+                        <a class="nav-link active" href="index.html">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="event_list.html">Events</a>
@@ -225,16 +549,17 @@
                         <a class="nav-link" href="wishlist.html">
                             <i class="bi bi-heart me-1"></i>Wishlist
                         </a>
+                    </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="support.html">Support</a></li>
+                        <a class="nav-link" href="support.html">Support</a>
                     </li>
                 </ul>
-                <div class="d-flex align-items-center gap-3">
-                    <a href="signup.html" class="btn btn-outline-light btn-sm">Sign In</a>
-                    <a href="login.html" class="btn btn-outline-light btn-sm">Logi In</a>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="signup.html" class="btn btn-outline-light btn-sm">Sign Up</a>
+                    <a href="login.html" class="btn btn-primary btn-sm">Login</a>
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
-                            <img src="https://i.pravatar.cc/40?img=12" alt="User" class="rounded-circle" style="width: 40px; height: 40px;">
+                            <img src="https://i.pravatar.cc/40?img=12" alt="User" class="user-avatar">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>Profile</a></li>
@@ -252,15 +577,15 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section d-flex align-items-center">
+    <section class="hero-section">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-6" data-aos="fade-right">
+                <div class="col-lg-6 hero-content" data-aos="fade-right">
                     <h1 class="display-1 fw-black mb-4">
                         Discover Your Next 
                         <span class="gradient-text">Musical Journey</span>
                     </h1>
-                    <p class="lead mb-5 text-white-50">
+                    <p class="lead mb-4 text-white-50">
                         Experience unforgettable live music events. From intimate acoustic sessions to massive festivals - all in one place.
                     </p>
                     <div class="d-flex gap-3 flex-wrap">
@@ -270,9 +595,9 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-6" data-aos="fade-left">
+                <div class="col-lg-6 hero-image" data-aos="fade-left">
                     <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=800&fit=crop" 
-                         alt="Concert" class="img-fluid rounded-4 shadow-lg">
+                         alt="Concert" class="img-fluid">
                 </div>
             </div>
         </div>
@@ -329,10 +654,10 @@
     <!-- Featured Events -->
     <section class="py-5 my-5">
         <div class="container">
-            <div class="d-flex justify-content-between align-items-center mb-5" data-aos="fade-up">
+            <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3" data-aos="fade-up">
                 <div>
                     <h2 class="display-4 fw-bold mb-2">Featured Events</h2>
-                    <p class="text-white-50">Don't miss these amazing upcoming shows</p>
+                    <p class="text-white-50 mb-0">Don't miss these amazing upcoming shows</p>
                 </div>
                 <a href="event_list.html" class="btn btn-outline-light">
                     View All <i class="bi bi-arrow-right ms-2"></i>
@@ -342,7 +667,7 @@
                 <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="100">
                     <div class="event-card">
                         <div class="position-relative">
-                            <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop" alt="Event">
+                            <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop" alt="Summer Rock Festival">
                             <span class="badge-category">Rock</span>
                         </div>
                         <div class="p-4">
@@ -355,8 +680,8 @@
                                 <i class="bi bi-geo-alt me-2"></i>
                                 <small>Arena Stadium</small>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h4 mb-0 gradient-text">RS 2500.00</span>
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <span class="h4 mb-0 gradient-text">RS 2,500</span>
                                 <a href="event_details.html" class="btn btn-primary">Book Now</a>
                             </div>
                         </div>
@@ -365,7 +690,7 @@
                 <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="200">
                     <div class="event-card">
                         <div class="position-relative">
-                            <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=300&fit=crop" alt="Event">
+                            <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=300&fit=crop" alt="Jazz Night Live">
                             <span class="badge-category">Jazz</span>
                         </div>
                         <div class="p-4">
@@ -378,8 +703,8 @@
                                 <i class="bi bi-geo-alt me-2"></i>
                                 <small>Blue Note Club</small>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h4 mb-0 gradient-text">RS 1500.00</span>
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <span class="h4 mb-0 gradient-text">RS 1,500</span>
                                 <a href="event_details.html" class="btn btn-primary">Book Now</a>
                             </div>
                         </div>
@@ -388,7 +713,7 @@
                 <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="300">
                     <div class="event-card">
                         <div class="position-relative">
-                            <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=300&fit=crop" alt="Event">
+                            <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=300&fit=crop" alt="Electronic Beats">
                             <span class="badge-category">Electronic</span>
                         </div>
                         <div class="p-4">
@@ -401,8 +726,8 @@
                                 <i class="bi bi-geo-alt me-2"></i>
                                 <small>Warehouse District</small>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h4 mb-0 gradient-text">RS 3500.00</span>
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <span class="h4 mb-0 gradient-text">RS 3,500</span>
                                 <a href="event_details.html" class="btn btn-primary">Book Now</a>
                             </div>
                         </div>
@@ -438,7 +763,7 @@
 
     <!-- CTA Section -->
     <section class="cta-section text-center">
-        <div class="container position-relative">
+        <div class="container position-relative" style="z-index: 10;">
             <h2 class="display-3 fw-bold mb-4" data-aos="fade-up">Ready to Experience Live Music?</h2>
             <p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">
                 Join thousands of music lovers and discover your next favorite event
@@ -454,14 +779,14 @@
     <footer class="py-5">
         <div class="container">
             <div class="row g-4">
-                <div class="col-lg-4">
+                <div class="col-lg-4 mb-4 mb-lg-0">
                     <div class="d-flex align-items-center mb-3">
                         <div class="bg-primary rounded-3 p-2 me-2">
                             <i class="bi bi-music-note-beamed fs-4"></i>
                         </div>
                         <span class="fw-bold fs-4">Infinity Events</span>
                     </div>
-                    <p class="text-white-50">Your gateway to unforgettable musical experiences. Connecting artists and fans worldwide.</p>
+                    <p class="text-white-50 mb-4">Your gateway to unforgettable musical experiences. Connecting artists and fans worldwide.</p>
                     <div class="d-flex gap-2">
                         <a href="#" class="social-icon">
                             <i class="bi bi-facebook"></i>
@@ -481,7 +806,7 @@
                     <h5 class="fw-bold mb-3">Company</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="about.html" class="text-white-50 text-decoration-none">About Us</a></li>
-                        <li class="mb-2"><a href="events.html" class="text-white-50 text-decoration-none">Events</a></li>
+                        <li class="mb-2"><a href="event_list.html" class="text-white-50 text-decoration-none">Events</a></li>
                         <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Careers</a></li>
                         <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Blog</a></li>
                     </ul>
@@ -505,18 +830,28 @@
                     </ul>
                 </div>
                 <div class="col-6 col-lg-2">
-                    <h5 class="fw-bold mb-3">Download</h5>
-                    <a href="#" class="btn btn-outline-light btn-sm d-block mb-2">
+                    <h5 class="fw-bold mb-3">Download App</h5>
+                    <a href="#" class="btn btn-outline-light btn-sm d-block mb-2 text-start">
                         <i class="bi bi-apple me-2"></i>App Store
                     </a>
-                    <a href="#" class="btn btn-outline-light btn-sm d-block">
+                    <a href="#" class="btn btn-outline-light btn-sm d-block text-start">
                         <i class="bi bi-google-play me-2"></i>Play Store
                     </a>
                 </div>
             </div>
-            <hr class="my-4 border-secondary">
-            <div class="text-center text-white-50">
-                <p class="mb-0">&copy; 2026 Infinity Events. All rights reserved. Made with for music lovers</p>
+            <hr class="my-4 border-secondary opacity-25">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <p class="text-white-50 mb-0">
+                        <i class="bi bi-heart-fill text-danger me-1"></i>
+                        &copy; 2026 Infinity Events. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="text-white-50 mb-0">
+                        Made with passion for music lovers worldwide
+                    </p>
+                </div>
             </div>
         </div>
     </footer>
@@ -531,6 +866,29 @@
             duration: 1000,
             once: true,
             offset: 100
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(15, 1, 24, 0.98)';
+                navbar.style.boxShadow = '0 5px 30px rgba(0, 0, 0, 0.3)';
+            } else {
+                navbar.style.background = 'rgba(15, 1, 24, 0.95)';
+                navbar.style.boxShadow = 'none';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const navbarCollapse = document.querySelector('.navbar-collapse');
+                if (navbarCollapse.classList.contains('show')) {
+                    const bsCollapse = new bootstrap.Collapse(navbarCollapse);
+                    bsCollapse.hide();
+                }
+            });
         });
     </script>
 </body>
