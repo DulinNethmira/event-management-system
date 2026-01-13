@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from pydantic import BaseModel, Field
 from typing import Literal
-from backend.app.api.utils.verification_service import VerificationService
+from app.api.utils.verification_service import VerificationService
 
 router = APIRouter(tags=["Auth"])
 

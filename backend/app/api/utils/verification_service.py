@@ -1,9 +1,8 @@
-# --- Imports ---
-from backend.app.api.utils.email import send_email_otp 
-from backend.app.api.utils.whatsapp import send_sms_otp
-from backend.app.api.utils.otp_manager import generate_otp, store_otp, verify_otp_logic
+from app.api.utils.email import send_email_otp 
+from app.api.utils.sms import send_sms_otp
+from app.api.utils.otp_manager import generate_otp, store_otp, verify_otp_logic
 
-# --- Verification Service ---
+
 class VerificationService:
     
     async def send_verification(self, method: str, receiver: str) -> dict:
@@ -18,7 +17,6 @@ class VerificationService:
             }
             
         elif method == "mobile":
-            # Header: Twilio SMS execution
             sent = send_sms_otp(receiver, otp_code)
             return {
                 "success": sent, 

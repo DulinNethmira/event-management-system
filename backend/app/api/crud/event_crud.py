@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_, any_
-from backend.app.api.models.event import Event
-from backend.app.api.schemas.event_schema import EventCreate, EventUpdate
+from app.api.models.event import Event
+from app.api.schemas.event_schema import EventCreate, EventUpdate
 from typing import Optional, List
 from datetime import datetime
 

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-from backend.app.api.core.database import get_db
-from backend.app.api.schemas.event_schema import EventCreate, EventUpdate, EventResponse
-from backend.app.api.crud import event_crud
+from app.api.core.database import get_db
+from app.api.schemas.event_schema import EventCreate, EventUpdate, EventResponse
+from app.api.crud import event_crud
 from typing import List, Optional
 from datetime import datetime
 
