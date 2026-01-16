@@ -1,13 +1,15 @@
 from __future__ import annotations
 from datetime import datetime
 from enum import Enum
-from typing import Optional
-from pydantic import BaseModel
-from sqlalchemy import String, DateTime, Text, ForeignKey, Integer, Enum as SAEnum, func
+from sqlalchemy import String, DateTime, Text, ForeignKey, Integer, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from .user import Base, User
-from backend.app.api.models.wishlist import WishlistItem
-from backend.app.api.models.booking import Booking
+from app.core.database import Base
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .user import User
+    from .booking import Booking
+    from .wishlist import WishlistItem
 
 class EventStatus(str, Enum):
     DRAFT = "DRAFT"
@@ -25,6 +27,7 @@ class Category(str, Enum):
 
 class Event(Base):
     __tablename__ = "events"
+
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(String(200), index=True)
     description: Mapped[str] = mapped_column(Text)
@@ -33,34 +36,12 @@ class Event(Base):
     location: Mapped[str] = mapped_column(String(250))
     starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     ends_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    capacity: Mapped[int] = mapped_column(Integer)  # total seats
+    capacity: Mapped[int] = mapped_column(Integer)
     organizer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
-
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
-    )
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    organizer: Mapped[User] = relationship("User", back_populates="events")
+    # Relationships
+    organizer: Mapped["User"] = relationship("User", back_populates="events")
     bookings: Mapped[list["Booking"]] = relationship("Booking", back_populates="event", cascade="all, delete-orphan")
     wishlist_items: Mapped[list["WishlistItem"]] = relationship("WishlistItem", back_populates="event", cascade="all, delete-orphan")
-
-class EventResponse(BaseModel):
-    id: int
-    title: str
-    description: str
-    category: Category
-    status: EventStatus
-    location: str
-    starts_at: datetime
-    ends_at: datetime
-    capacity: int
-    organizer_id: int
-    created_at: datetime
-    updated_at: datetime
-
-    class Config:
-        orm_mode = True
-        from_attributes = True
-
-

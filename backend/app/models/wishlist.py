@@ -2,8 +2,12 @@ from __future__ import annotations
 from datetime import datetime
 from sqlalchemy import ForeignKey, DateTime, func, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from .user import Base, User
-from .event import Event
+from typing import TYPE_CHECKING
+from app.core.database import Base
+
+if TYPE_CHECKING:
+    from .user import User
+    from .event import Event
 
 class WishlistItem(Base):
     __tablename__ = "wishlist_items"
@@ -16,5 +20,6 @@ class WishlistItem(Base):
     event_id: Mapped[int] = mapped_column(ForeignKey("events.id"), index=True)
     added_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    user: Mapped[User] = relationship("User", back_populates="wishlist_items")
-    event: Mapped[Event] = relationship("Event", back_populates="wishlist_items")
+    # Relationships
+    user: Mapped["User"] = relationship("User", back_populates="wishlist_items")
+    event: Mapped["Event"] = relationship("Event", back_populates="wishlist_items")

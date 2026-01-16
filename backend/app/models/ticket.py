@@ -1,9 +1,13 @@
 from __future__ import annotations
 from datetime import datetime
 from enum import Enum
-from sqlalchemy import ForeignKey, String, Text, DateTime, Enum as SAEnum, func
+from sqlalchemy import ForeignKey, String, Text, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from .user import Base, User
+from typing import TYPE_CHECKING
+from app.core.database import Base
+
+if TYPE_CHECKING:
+    from .user import User
 
 class TicketStatus(str, Enum):
     OPEN = "OPEN"
@@ -18,15 +22,14 @@ class Ticket(Base):
     subject: Mapped[str] = mapped_column(String(200), index=True)
     description: Mapped[str] = mapped_column(Text)
     status: Mapped[TicketStatus] = mapped_column(String(20), default=TicketStatus.OPEN.value)
-
-    requester_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)  # who opened the ticket
-    assignee_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)  # agent handling
-
+    requester_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    assignee_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    requester: Mapped[User] = relationship("User", foreign_keys=[requester_id], back_populates="tickets")
-    assignee: Mapped[User] = relationship("User", foreign_keys=[assignee_id], back_populates="assigned_tickets")
+    # Relationships
+    requester: Mapped["User"] = relationship("User", foreign_keys=[requester_id], back_populates="tickets")
+    assignee: Mapped["User"] = relationship("User", foreign_keys=[assignee_id], back_populates="assigned_tickets")
     comments: Mapped[list["TicketComment"]] = relationship("TicketComment", back_populates="ticket", cascade="all, delete-orphan")
 
 class TicketComment(Base):
@@ -38,5 +41,6 @@ class TicketComment(Base):
     body: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    ticket: Mapped[Ticket] = relationship("Ticket", back_populates="comments")
-    author: Mapped[User] = relationship("User", back_populates="ticket_comments")
+    # Relationships
+    ticket: Mapped["Ticket"] = relationship("Ticket", back_populates="comments")
+    author: Mapped["User"] = relationship("User", back_populates="ticket_comments")

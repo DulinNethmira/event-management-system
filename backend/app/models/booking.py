@@ -1,9 +1,14 @@
+from __future__ import annotations
 from datetime import datetime
 from enum import Enum
-from sqlalchemy import ForeignKey, Integer, String, DateTime, Enum as SAEnum, Numeric, func
+from sqlalchemy import ForeignKey, Integer, String, DateTime, Numeric, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from .user import Base, User
-from .event import Event
+from typing import TYPE_CHECKING
+from app.core.database import Base
+
+if TYPE_CHECKING:
+    from .user import User
+    from .event import Event
 
 class BookingStatus(str, Enum):
     PENDING = "PENDING"
@@ -19,6 +24,7 @@ class PaymentStatus(str, Enum):
 
 class Booking(Base):
     __tablename__ = "bookings"
+    
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
     event_id: Mapped[int] = mapped_column(ForeignKey("events.id"), index=True)
@@ -29,8 +35,9 @@ class Booking(Base):
     payment_status: Mapped[PaymentStatus] = mapped_column(String(20), default=PaymentStatus.UNPAID.value)
     booked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    user: Mapped[User] = relationship("User", back_populates="bookings")
-    event: Mapped[Event] = relationship("Event", back_populates="bookings")
+    # Relationships
+    user: Mapped["User"] = relationship("User", back_populates="bookings")
+    event: Mapped["Event"] = relationship("Event", back_populates="bookings")
 
     @property
     def is_confirmed(self) -> bool:
