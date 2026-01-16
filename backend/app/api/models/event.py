@@ -2,11 +2,12 @@ from __future__ import annotations
 from datetime import datetime
 from enum import Enum
 from typing import Optional
+from pydantic import BaseModel
 from sqlalchemy import String, DateTime, Text, ForeignKey, Integer, Enum as SAEnum, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .user import Base, User
-from models.wishlist import WishlistItem
-from models.booking import Booking
+from backend.app.api.models.wishlist import WishlistItem
+from backend.app.api.models.booking import Booking
 
 class EventStatus(str, Enum):
     DRAFT = "DRAFT"
@@ -24,7 +25,6 @@ class Category(str, Enum):
 
 class Event(Base):
     __tablename__ = "events"
-
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(String(200), index=True)
     description: Mapped[str] = mapped_column(Text)
@@ -44,3 +44,23 @@ class Event(Base):
     organizer: Mapped[User] = relationship("User", back_populates="events")
     bookings: Mapped[list["Booking"]] = relationship("Booking", back_populates="event", cascade="all, delete-orphan")
     wishlist_items: Mapped[list["WishlistItem"]] = relationship("WishlistItem", back_populates="event", cascade="all, delete-orphan")
+
+class EventResponse(BaseModel):
+    id: int
+    title: str
+    description: str
+    category: Category
+    status: EventStatus
+    location: str
+    starts_at: datetime
+    ends_at: datetime
+    capacity: int
+    organizer_id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
+
+

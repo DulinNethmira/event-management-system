@@ -1,15 +1,7 @@
-"""
-Booking Pydantic Schemas - Fixed Version
-Complete request/response validation for booking operations
-"""
-
 from pydantic import BaseModel, Field, validator
 from datetime import datetime
 from typing import Optional
 from enum import Enum
-
-
-# ============ ENUMS ============
 
 class BookingStatus(str, Enum):
     """Booking status enumeration"""
