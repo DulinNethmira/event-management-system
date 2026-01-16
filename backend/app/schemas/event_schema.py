@@ -63,6 +63,9 @@ class EventResponse(BaseModel):
     organizer_id: int
     created_at: datetime
     updated_at: datetime
+    ga_ticket_price: float | None = None
+    vip_ticket_price: float | None = None
+    pa_ticket_price: float | None = None
 
     model_config = {
         "from_attributes": True,

@@ -14,6 +14,10 @@ def create_event(db: Session, event: EventCreate) -> Event:
         ends_at=event.ends_at,
         capacity=event.capacity,
         organizer_id=event.organizer_id,
+        ga_ticket_price=event.ga_ticket_price or 0.0,
+        vip_ticket_price=event.vip_ticket_price or 0.0,
+        pa_ticket_price=event.pa_ticket_price or 0.0,
+
         
     )
     db.add(db_event)

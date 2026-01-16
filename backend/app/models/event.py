@@ -40,6 +40,9 @@ class Event(Base):
     organizer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    ga_ticket_price: Mapped[float] = mapped_column(default=0.0)
+    vip_ticket_price: Mapped[float] = mapped_column(default=0.0)
+    pa_ticket_price: Mapped[float] = mapped_column(default=0.0)
 
     # Relationships
     organizer: Mapped["User"] = relationship("User", back_populates="events")
