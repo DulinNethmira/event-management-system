@@ -1,17 +1,68 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, File, UploadFile, Form
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from datetime import datetime
+import shutil
+import os
+import uuid
+from pathlib import Path
 from app.core.database import get_db
 from app.crud import event_crud
 from app.schemas.event_schema import EventCreate, EventUpdate, EventResponse
 from app.models import EventStatus, Category
-
+import json
 router = APIRouter(prefix="/events", tags=["events"])
+UPLOAD_DIR = Path("uploads/event_posters")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
 
 @router.post("/", response_model=EventResponse, status_code=201)
-def create_event(event: EventCreate, db: Session = Depends(get_db)):
-    return event_crud.create_event(db, event)
+async def create_event(
+    poster_image: UploadFile = File(None),
+    event_data: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    
+    try:
+        event_dict = json.loads(event_data)
+        
+        # Handle image upload if provided
+        poster_url = None
+        if poster_image and poster_image.filename:
+            # Validate file type
+            allowed_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
+            file_extension = os.path.splitext(poster_image.filename)[1].lower()
+            
+            if file_extension not in allowed_extensions:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"Invalid file type. Allowed types: {', '.join(allowed_extensions)}"
+                )
+            
+            # Generate unique filename
+            unique_filename = f"{uuid.uuid4()}{file_extension}"
+            file_path = UPLOAD_DIR / unique_filename
+            
+            # Save file
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(poster_image.file, buffer)
+            
+            # Store relative URL
+            poster_url = f"/uploads/event_posters/{unique_filename}"
+        
+        # Add poster_url to event data
+        event_dict['poster_url'] = poster_url
+        
+        # Create event object
+        event = EventCreate(**event_dict)
+        
+        # Save to database
+        return event_crud.create_event(db, event)
+        
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON data")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/", response_model=List[EventResponse])
 def list_events(
@@ -46,7 +97,6 @@ def search_events_by_location(
 def search_events_by_title(
     keyword: str = Query(..., min_length=1),
     db: Session = Depends(get_db)):
-
     events = event_crud.get_events_by_title_keyword(db, keyword)
     return events
 
@@ -87,18 +137,67 @@ def read_event(event_id: int, db: Session = Depends(get_db)):
     return event
 
 @router.put("/{event_id}", response_model=EventResponse)
-def update_event(
+async def update_event(
     event_id: int,
-    updated_event: EventUpdate,
+    poster_image: UploadFile = File(None),
+    event_data: str = Form(None),
     db: Session = Depends(get_db)):
+    """Update an event with optional new poster image"""
+    import json
+    
+    # Get existing event
+    existing_event = event_crud.get_event(db, event_id)
+    if not existing_event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    # Parse event data if provided
+    update_dict = {}
+    if event_data:
+        try:
+            update_dict = json.loads(event_data)
+        except json.JSONDecodeError:
+            raise HTTPException(status_code=400, detail="Invalid JSON data")
+    
+    # Handle new image upload
+    if poster_image and poster_image.filename:
+        # Delete old image if exists
+        if existing_event.poster_url:
+            old_file_path = Path(".") / existing_event.poster_url.lstrip("/")
+            if old_file_path.exists():
+                old_file_path.unlink()
+        
+        # Save new image
+        file_extension = os.path.splitext(poster_image.filename)[1].lower()
+        unique_filename = f"{uuid.uuid4()}{file_extension}"
+        file_path = UPLOAD_DIR / unique_filename
+        
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(poster_image.file, buffer)
+        
+        update_dict['poster_url'] = f"/uploads/event_posters/{unique_filename}"
+    
+    # Update event
+    updated_event = EventUpdate(**update_dict)
     event = event_crud.update_event(db, event_id, updated_event)
+    
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     return event
 
 @router.delete("/{event_id}", status_code=204)
 def delete_event(event_id: int, db: Session = Depends(get_db)):
+    # Get event to delete image
+    event = event_crud.get_event(db, event_id)
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    # Delete image file if exists
+    if event.poster_url:
+        file_path = Path(".") / event.poster_url.lstrip("/")
+        if file_path.exists():
+            file_path.unlink()
+    
+    # Delete event from database
     success = event_crud.delete_event(db, event_id)
     if not success:
         raise HTTPException(status_code=404, detail="Event not found")
-    return "deleted successfully"

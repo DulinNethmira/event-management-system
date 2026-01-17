@@ -422,7 +422,7 @@
                     </div>
                 </div>
 
-                <!-- Featured Artists -->
+                <!-- Featured Artists
                 <div class="info-card mb-4" data-aos="fade-up" data-aos-delay="200">
                     <h3 class="fw-bold mb-4">Featured Artists</h3>
                     <div class="row g-3">
@@ -455,7 +455,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Venue Information -->
                 <div class="info-card mb-4" data-aos="fade-up" data-aos-delay="300">
@@ -698,21 +698,299 @@
             </div>
         </div>
     </footer>
-
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Initialize AOS
         AOS.init({
             duration: 1000,
             once: true,
             offset: 100
         });
+        const API_BASE_URL = 'http://127.0.0.1:8000';
 
-        // Quantity Control Functions
+        function getEventIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+        }
+
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+        }
+
+        async function loadEventDetails() {
+            const eventId = getEventIdFromURL();
+            if (!eventId) {
+                console.warn('No event ID provided, using static content');
+                return;
+            }
+
+            try {
+                showLoading();
+                const response = await fetch(`${API_BASE_URL}/events/${eventId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Event not found');
+                }
+                
+                const event = await response.json();
+                populateEventDetails(event);
+
+                loadSimilarEvents(event.category);
+                
+            } catch (error) {
+                console.error('Error loading event:', error);
+                showError('Failed to load event details. Please try again.');
+            }
+        }
+        function showLoading() {
+            const hero = document.querySelector('.event-hero');
+            hero.innerHTML = `
+                <div class="d-flex justify-content-center align-items-center h-100">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const hero = document.querySelector('.event-hero');
+            hero.innerHTML = `
+                <div class="alert alert-danger m-4" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    ${message}
+                    <a href="event_list.html" class="btn btn-sm btn-primary mt-3">Back to Events</a>
+                </div>
+            `;
+        }
+
+        function populateEventDetails(event) {
+            // Construct image URL
+            const imageUrl = event.poster_url 
+                ? `${API_BASE_URL}${event.poster_url}` 
+                : 'https://via.placeholder.com/1200x500/6c757d/ffffff?text=Event+Image';
+            
+            // Update hero section
+            const heroSection = document.querySelector('.event-hero');
+            heroSection.innerHTML = `
+                <img src="${imageUrl}" 
+                    alt="${event.title}"
+                    onerror="this.src='https://via.placeholder.com/1200x500/6c757d/ffffff?text=Image+Not+Found'">
+                <div class="event-hero-content">
+                    <span class="badge-category">${event.category}</span>
+                    <h1 class="display-3 fw-bold mb-3">${event.title}</h1>
+                    <div class="d-flex flex-wrap gap-4 text-white-50">
+                        <div>
+                            <i class="bi bi-calendar3 me-2"></i>
+                            <span>${formatDate(event.starts_at)}</span>
+                        </div>
+                        <div>
+                            <i class="bi bi-clock me-2"></i>
+                            <span>${formatTime(event.starts_at)} - ${formatTime(event.ends_at)}</span>
+                        </div>
+                        <div>
+                            <i class="bi bi-geo-alt me-2"></i>
+                            <span>${event.location}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Update description section
+            const descriptionSection = document.querySelector('.info-card.mb-4');
+            if (descriptionSection) {
+                descriptionSection.innerHTML = `
+                    <h2 class="fw-bold mb-4">About This Event</h2>
+                    <p class="text-white-50 mb-4">${event.description || 'No description available.'}</p>
+                `;
+            }
+            
+            // Update venue location
+            const locationElement = document.querySelector('.info-item .info-icon + div p');
+            if (locationElement) {
+                locationElement.textContent = event.location;
+            }
+            
+            // Update booking card with prices
+            updateBookingCard(event);
+            
+            // Update ticket availability section
+            updateTicketAvailability(event);
+            
+            // Update page title
+            document.title = `${event.title} - Infinity Events`;
+        }
+
+        function updateBookingCard(event) {
+            const ticketTypeSelect = document.getElementById('ticketType');
+            
+            if (!ticketTypeSelect) return;
+            
+            // Build ticket options
+            let options = '';
+            if (event.ga_ticket_price && event.ga_ticket_price > 0) {
+                options += `<option value="${event.ga_ticket_price}">General Admission - RS ${event.ga_ticket_price.toLocaleString()}</option>`;
+            }
+            if (event.vip_ticket_price && event.vip_ticket_price > 0) {
+                options += `<option value="${event.vip_ticket_price}">VIP Pass - RS ${event.vip_ticket_price.toLocaleString()}</option>`;
+            }
+            if (event.pa_ticket_price && event.pa_ticket_price > 0) {
+                options += `<option value="${event.pa_ticket_price}">Platinum Package - RS ${event.pa_ticket_price.toLocaleString()}</option>`;
+            }
+            
+            if (options) {
+                ticketTypeSelect.innerHTML = options;
+                
+                // Update initial price display
+                const initialPrice = event.ga_ticket_price || event.vip_ticket_price || event.pa_ticket_price || 0;
+                const priceDisplay = document.querySelector('.gradient-text');
+                if (priceDisplay) {
+                    priceDisplay.textContent = `RS ${initialPrice.toLocaleString()}.00`;
+                }
+                
+                // Calculate initial prices
+                updatePrice();
+            }
+        }
+        //add event listener to load event details on page load
+        function updateTicketAvailability(event) {
+            const availabilitySection = document.querySelector('.sticky-booking .info-card:last-child');
+            if (!availabilitySection) return;
+            
+            const capacityPercentage = {
+                ga: 65,
+                vip: 25,
+                pa: 45
+            };
+            
+            let html = '<h5 class="fw-bold mb-3">Ticket Types Available</h5>';
+            
+            if (event.ga_ticket_price && event.ga_ticket_price > 0) {
+                const remaining = Math.floor(event.capacity * (capacityPercentage.ga / 100));
+                html += `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>General Admission</span>
+                        <span class="text-success fw-bold">Available</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: ${capacityPercentage.ga}%"></div>
+                    </div>
+                    <small class="text-white-50">${remaining} tickets remaining</small>
+                </div>
+                `;
+            }
+            
+            if (event.vip_ticket_price && event.vip_ticket_price > 0) {
+                const remaining = Math.floor(event.capacity * (capacityPercentage.vip / 100));
+                html += `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>VIP Pass</span>
+                        <span class="text-warning fw-bold">Limited</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-warning" style="width: ${capacityPercentage.vip}%"></div>
+                    </div>
+                    <small class="text-white-50">${remaining} tickets remaining</small>
+                </div>
+                `;
+            }
+            
+            if (event.pa_ticket_price && event.pa_ticket_price > 0) {
+                const remaining = Math.floor(event.capacity * (capacityPercentage.pa / 100));
+                html += `
+                <div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Platinum Package</span>
+                        <span class="text-success fw-bold">Available</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: ${capacityPercentage.pa}%"></div>
+                    </div>
+                    <small class="text-white-50">${remaining} tickets remaining</small>
+                </div>
+                `;
+            }
+            
+            availabilitySection.innerHTML = html;
+        }
+        //load similar events based on category
+        async function loadSimilarEvents(category) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/events/?category=${category}&limit=4`);
+                
+                if (!response.ok) return;
+                
+                const events = await response.json();
+                
+                if (events.length > 1) {
+                    displaySimilarEvents(events);
+                }
+            } catch (error) {
+                console.error('Error loading similar events:', error);
+            }
+        }
+
+        //display similar events in the similar events section
+        function displaySimilarEvents(events) {
+            const currentEventId = parseInt(getEventIdFromURL());
+            const filteredEvents = events.filter(e => e.id !== currentEventId).slice(0, 3);
+            
+            if (filteredEvents.length === 0) return;
+            
+            const container = document.querySelector('section.py-5.my-5 .row');
+            if (!container) return;
+            
+            container.innerHTML = filteredEvents.map(event => {
+                const imageUrl = event.poster_url 
+                    ? `${API_BASE_URL}${event.poster_url}` 
+                    : 'https://via.placeholder.com/400x200/6c757d/ffffff?text=No+Image';
+                
+                const price = event.ga_ticket_price || event.vip_ticket_price || event.pa_ticket_price || 0;
+                
+                return `
+                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="info-card">
+                        <img src="${imageUrl}" 
+                            alt="${event.title}" 
+                            class="w-100 rounded-3 mb-3" 
+                            style="height: 200px; object-fit: cover;"
+                            onerror="this.src='https://via.placeholder.com/400x200/6c757d/ffffff?text=No+Image'">
+                        <span class="badge-category">${event.category}</span>
+                        <h5 class="fw-bold mb-2">${event.title}</h5>
+                        <div class="d-flex align-items-center text-white-50 mb-2">
+                            <i class="bi bi-calendar3 me-2"></i>
+                            <small>${formatDate(event.starts_at)}</small>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 mb-0 gradient-text">RS ${price.toLocaleString()}.00</span>
+                            <a href="event_details.html?id=${event.id}" class="btn btn-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
         function increaseQty() {
             const qtyInput = document.getElementById('quantity');
+            if (!qtyInput) return;
+            
             let currentQty = parseInt(qtyInput.value);
             if (currentQty < 10) {
                 qtyInput.value = currentQty + 1;
@@ -722,6 +1000,8 @@
 
         function decreaseQty() {
             const qtyInput = document.getElementById('quantity');
+            if (!qtyInput) return;
+            
             let currentQty = parseInt(qtyInput.value);
             if (currentQty > 1) {
                 qtyInput.value = currentQty - 1;
@@ -729,13 +1009,14 @@
             }
         }
 
-        // Update Price Calculations
         function updatePrice() {
             const ticketType = document.getElementById('ticketType');
             const quantity = document.getElementById('quantity');
             const subtotalEl = document.getElementById('subtotal');
             const serviceFeeEl = document.getElementById('serviceFee');
             const totalEl = document.getElementById('total');
+
+            if (!ticketType || !quantity) return;
 
             const ticketPrice = parseFloat(ticketType.value);
             const qty = parseInt(quantity.value);
@@ -744,38 +1025,139 @@
             const serviceFee = subtotal * 0.1; // 10% service fee
             const total = subtotal + serviceFee;
 
-            subtotalEl.textContent = `RS ${subtotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            serviceFeeEl.textContent = `RS ${serviceFee.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            totalEl.textContent = `RS ${total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            if (subtotalEl) {
+                subtotalEl.textContent = `RS ${subtotal.toLocaleString('en-US', {
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: 2
+                })}`;
+            }
+            
+            if (serviceFeeEl) {
+                serviceFeeEl.textContent = `RS ${serviceFee.toLocaleString('en-US', {
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: 2
+                })}`;
+            }
+            
+            if (totalEl) {
+                totalEl.textContent = `RS ${total.toLocaleString('en-US', {
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: 2
+                })}`;
+            }
         }
 
-        // Wishlist Toggle
-        document.querySelector('.share-btn[title="Add to Wishlist"]').addEventListener('click', function(e) {
-            e.preventDefault();
-            const icon = this.querySelector('i');
-            if (icon.classList.contains('bi-heart')) {
-                icon.classList.remove('bi-heart');
-                icon.classList.add('bi-heart-fill');
-                this.style.color = '#8c25f4';
-            } else {
-                icon.classList.remove('bi-heart-fill');
-                icon.classList.add('bi-heart');
-                this.style.color = '';
-            }
-        });
+        // ==================== Booking ====================
 
-        // Share Event
-        document.querySelector('.share-btn[title="Share Event"]').addEventListener('click', function(e) {
-            e.preventDefault();
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Summer Rock Festival 2024',
-                    text: 'Check out this amazing event!',
-                    url: window.location.href
+        function bookEvent() {
+            const eventId = getEventIdFromURL();
+            const ticketType = document.getElementById('ticketType');
+            const quantity = document.getElementById('quantity');
+            const total = document.getElementById('total');
+            
+            if (!ticketType || !quantity || !total) return;
+            
+            const bookingData = {
+                eventId: eventId,
+                ticketType: ticketType.value,
+                ticketTypeName: ticketType.options[ticketType.selectedIndex].text,
+                quantity: quantity.value,
+                total: total.textContent
+            };
+            
+            // Save to session storage
+            sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
+            
+            // Show confirmation
+            alert('Booking data saved! Redirecting to checkout...');
+            
+            // Uncomment to redirect to checkout page
+            // window.location.href = 'checkout.html';
+        }
+
+        // ==================== Wishlist & Share ====================
+
+        function initializeActions() {
+            // Wishlist Toggle
+            const wishlistBtn = document.querySelector('.share-btn[title="Add to Wishlist"]');
+            if (wishlistBtn) {
+                wishlistBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const icon = this.querySelector('i');
+                    
+                    if (icon.classList.contains('bi-heart')) {
+                        icon.classList.remove('bi-heart');
+                        icon.classList.add('bi-heart-fill');
+                        this.style.color = '#8c25f4';
+                        showToast('Added to wishlist!');
+                    } else {
+                        icon.classList.remove('bi-heart-fill');
+                        icon.classList.add('bi-heart');
+                        this.style.color = '';
+                        showToast('Removed from wishlist');
+                    }
                 });
-            } else {
-                alert('Share link: ' + window.location.href);
             }
+
+            // Share Event
+            const shareBtn = document.querySelector('.share-btn[title="Share Event"]');
+            if (shareBtn) {
+                shareBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    if (navigator.share) {
+                        navigator.share({
+                            title: document.title,
+                            text: 'Check out this amazing event!',
+                            url: window.location.href
+                        }).catch(err => console.log('Share cancelled'));
+                    } else {
+                        // Fallback: copy to clipboard
+                        navigator.clipboard.writeText(window.location.href);
+                        showToast('Link copied to clipboard!');
+                    }
+                });
+            }
+
+            // Book Now button
+            const bookBtn = document.querySelector('.btn-primary.w-100');
+            if (bookBtn) {
+                bookBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    bookEvent();
+                });
+            }
+        }
+
+        /**
+         * Show toast notification
+         * @param {string} message - Message to display
+         */
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 start-50 translate-middle-x mt-3';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert" 
+                    style="background: rgba(40, 167, 69, 0.2); border: 1px solid rgba(40, 167, 69, 0.5); 
+                            color: #fff; border-radius: 12px; backdrop-filter: blur(10px);">
+                    <i class="bi bi-check-circle me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load event details from API
+            loadEventDetails();
+            
+            // Initialize interactive elements
+            initializeActions();
         });
     </script>
 </body>

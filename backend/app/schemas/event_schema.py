@@ -1,5 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
+from typing import Optional
 from enum import Enum
 
 class EventStatus(str, Enum):
@@ -24,27 +25,35 @@ class EventBase(BaseModel):
     starts_at: datetime
     ends_at: datetime
     capacity: int
-    ga_ticket_price: float | None = None
-    vip_ticket_price: float | None = None
-    pa_ticket_price: float | None = None
+    ga_ticket_price: Optional[float] = None
+    vip_ticket_price: Optional[float] = None
+    pa_ticket_price: Optional[float] = None
+    poster_url: Optional[str] = None  # Added poster_url
 
 class EventCreate(EventBase):
     organizer_id: int
-    status: EventStatus = EventStatus.DRAFT  
-    
+    status: EventStatus = EventStatus.DRAFT
 
 class EventUpdate(BaseModel):
-    title: str | None = None
-    description: str | None = None
-    status: EventStatus | None = None
-    starts_at: datetime | None = None
-    ends_at: datetime | None = None
-    capacity: int | None = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[EventStatus] = None
+    starts_at: Optional[datetime] = None
+    ends_at: Optional[datetime] = None
+    capacity: Optional[int] = None
+    category: Optional[Category] = None 
+    location: Optional[str] = None  
+    ga_ticket_price: Optional[float] = None  
+    vip_ticket_price: Optional[float] = None  
+    pa_ticket_price: Optional[float] = None  
+    poster_url: Optional[str] = None  
 
 class EventRead(EventBase):
     id: int
     status: EventStatus
     organizer_id: int
+    created_at: datetime 
+    updated_at: datetime 
 
     model_config = {
         "from_attributes": True
@@ -63,9 +72,10 @@ class EventResponse(BaseModel):
     organizer_id: int
     created_at: datetime
     updated_at: datetime
-    ga_ticket_price: float | None = None
-    vip_ticket_price: float | None = None
-    pa_ticket_price: float | None = None
+    ga_ticket_price: Optional[float] = None
+    vip_ticket_price: Optional[float] = None
+    pa_ticket_price: Optional[float] = None
+    poster_url: Optional[str] = None 
 
     model_config = {
         "from_attributes": True,
@@ -82,7 +92,11 @@ class EventResponse(BaseModel):
                 "capacity": 500,
                 "organizer_id": 2,
                 "created_at": "2024-06-01T12:00:00",
-                "updated_at": "2024-06-10T15:30:00"
+                "updated_at": "2024-06-10T15:30:00",
+                "ga_ticket_price": 50.0,
+                "vip_ticket_price": 150.0,
+                "pa_ticket_price": 100.0,
+                "poster_url": "/uploads/event_posters/example.jpg"
             }
         }
     }
