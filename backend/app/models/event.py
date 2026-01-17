@@ -44,7 +44,6 @@ class Event(Base):
     vip_ticket_price: Mapped[float] = mapped_column(default=0.0)
     pa_ticket_price: Mapped[float] = mapped_column(default=0.0)
 
-    # Relationships
     organizer: Mapped["User"] = relationship("User", back_populates="events")
     bookings: Mapped[list["Booking"]] = relationship("Booking", back_populates="event", cascade="all, delete-orphan")
     wishlist_items: Mapped[list["WishlistItem"]] = relationship("WishlistItem", back_populates="event", cascade="all, delete-orphan")

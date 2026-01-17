@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Event Management System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .form-container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .form-title {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .events-list {
+      max-width: 1200px;
+      margin: 40px auto;
+    }
+    .event-card {
+      margin-bottom: 20px;
+      transition: transform 0.2s;
+    }
+    .event-card:hover {
+      transform: translateY(-5px);
+    }
+    .alert-fixed {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      min-width: 300px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Alert Container -->
+<div id="alertContainer"></div>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <a class="navbar-brand" href="#">EMS</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#create-event" onclick="showCreateForm()">Create Event</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#events-list" onclick="showEventsList()">View Events</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Create Event Form -->
+<div class="container" id="createEventSection">
+  <div class="form-container">
+    <h2 class="form-title">Create Event</h2>
+    <form id="eventForm">
+      <div class="mb-3">
+        <label for="title" class="form-label">Event Title *</label>
+        <input type="text" class="form-control" id="title" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" rows="3"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="category" class="form-label">Category *</label>
+        <select class="form-select" id="category" required>
+          <option value="">Choose category</option>
+          <option value="CONFERENCE">Conference</option>
+          <option value="WORKSHOP">Workshop</option>
+          <option value="SEMINAR">Seminar</option>
+          <option value="MEETUP">Meetup</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="location" class="form-label">Location *</label>
+        <input type="text" class="form-control" id="location" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="starts_at" class="form-label">Starts At *</label>
+        <input type="datetime-local" class="form-control" id="starts_at" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="ends_at" class="form-label">Ends At *</label>
+        <input type="datetime-local" class="form-control" id="ends_at" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="capacity" class="form-label">Capacity *</label>
+        <input type="number" class="form-control" id="capacity" min="1" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="organizer_id" class="form-label">Organizer ID *</label>
+        <input type="number" class="form-control" id="organizer_id" value="1" required>
+        <small class="text-muted">Default organizer ID is 1</small>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="ga_ticket_price" class="form-label">General Ticket Price</label>
+          <input type="number" class="form-control" id="ga_ticket_price" step="0.01" min="0">
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="vip_ticket_price" class="form-label">VIP Ticket Price</label>
+          <input type="number" class="form-control" id="vip_ticket_price" step="0.01" min="0">
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="pa_ticket_price" class="form-label">Platinum Ticket Price</label>
+          <input type="number" class="form-control" id="pa_ticket_price" step="0.01" min="0">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="status" class="form-label">Status</label>
+        <select class="form-select" id="status">
+          <option value="DRAFT">Draft</option>
+          <option value="PUBLISHED">Published</option>
+        </select>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary btn-lg">Create Event</button>
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('eventForm').reset()">Reset Form</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Events List -->
+<div class="container events-list" id="eventsListSection" style="display: none;">
+  <h2 class="text-center mb-4">All Events</h2>
+  
+  <!-- Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4 mb-2">
+          <select class="form-select" id="filterCategory" onchange="filterEvents()">
+            <option value="">All Categories</option>
+            <option value="CONFERENCE">Conference</option>
+            <option value="WORKSHOP">Workshop</option>
+            <option value="SEMINAR">Seminar</option>
+            <option value="MEETUP">Meetup</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-2">
+          <select class="form-select" id="filterStatus" onchange="filterEvents()">
+            <option value="">All Status</option>
+            <option value="DRAFT">Draft</option>
+            <option value="PUBLISHED">Published</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-2">
+          <button class="btn btn-primary w-100" onclick="loadEvents()">Refresh</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="eventsContainer" class="row">
+    <div class="col-12 text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE_URL = 'http://127.0.0.1:8000';
+
+// Show alert message
+function showAlert(message, type = 'success') {
+  const alertContainer = document.getElementById('alertContainer');
+  const alert = document.createElement('div');
+  alert.className = `alert alert-${type} alert-dismissible fade show alert-fixed`;
+  alert.innerHTML = `
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  `;
+  alertContainer.appendChild(alert);
+  
+  setTimeout(() => {
+    alert.remove();
+  }, 5000);
+}
+
+// Show create form
+function showCreateForm() {
+  document.getElementById('createEventSection').style.display = 'block';
+  document.getElementById('eventsListSection').style.display = 'none';
+}
+
+// Show events list
+function showEventsList() {
+  document.getElementById('createEventSection').style.display = 'none';
+  document.getElementById('eventsListSection').style.display = 'block';
+  loadEvents();
+}
+
+// Create Event - POST request
+document.getElementById('eventForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const eventData = {
+    title: document.getElementById('title').value,
+    description: document.getElementById('description').value || null,
+    category: document.getElementById('category').value,
+    location: document.getElementById('location').value,
+    starts_at: new Date(document.getElementById('starts_at').value).toISOString(),
+    ends_at: new Date(document.getElementById('ends_at').value).toISOString(),
+    capacity: parseInt(document.getElementById('capacity').value),
+    organizer_id: parseInt(document.getElementById('organizer_id').value),
+    ga_ticket_price: parseFloat(document.getElementById('ga_ticket_price').value) || null,
+    vip_ticket_price: parseFloat(document.getElementById('vip_ticket_price').value) || null,
+    pa_ticket_price: parseFloat(document.getElementById('pa_ticket_price').value) || null,
+    status: document.getElementById('status').value
+  };
+  
+  try {
+    const response = await fetch(`${API_BASE_URL}/events/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(eventData)
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      showAlert('Event created successfully!', 'success');
+      document.getElementById('eventForm').reset();
+      console.log('Created event:', result);
+    } else {
+      const error = await response.json();
+      showAlert(`Error: ${error.detail || 'Failed to create event'}`, 'danger');
+    }
+  } catch (error) {
+    showAlert(`Network error: ${error.message}`, 'danger');
+    console.error('Error:', error);
+  }
+});
+
+// Load all events - GET request
+async function loadEvents() {
+  const container = document.getElementById('eventsContainer');
+  container.innerHTML = '<div class="col-12 text-center"><div class="spinner-border" role="status"></div></div>';
+  
+  const category = document.getElementById('filterCategory').value;
+  const status = document.getElementById('filterStatus').value;
+  
+  let url = `${API_BASE_URL}/events/?limit=100`;
+  if (category) url += `&category=${category}`;
+  if (status) url += `&status=${status}`;
+  
+  try {
+    const response = await fetch(url);
+    
+    if (response.ok) {
+      const events = await response.json();
+      displayEvents(events);
+    } else {
+      container.innerHTML = '<div class="col-12"><div class="alert alert-danger">Failed to load events</div></div>';
+    }
+  } catch (error) {
+    container.innerHTML = `<div class="col-12"><div class="alert alert-danger">Network error: ${error.message}</div></div>`;
+  }
+}
+
+// Display events
+function displayEvents(events) {
+  const container = document.getElementById('eventsContainer');
+  
+  if (events.length === 0) {
+    container.innerHTML = '<div class="col-12"><div class="alert alert-info">No events found</div></div>';
+    return;
+  }
+  
+  container.innerHTML = events.map(event => `
+    <div class="col-md-6 col-lg-4">
+      <div class="card event-card h-100">
+        <div class="card-body">
+          <h5 class="card-title">${event.title}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">
+            <span class="badge bg-primary">${event.category}</span>
+            <span class="badge bg-${event.status === 'PUBLISHED' ? 'success' : 'secondary'}">${event.status}</span>
+          </h6>
+          <p class="card-text">${event.description || 'No description'}</p>
+          <ul class="list-unstyled">
+            <li><strong>Location:</strong> ${event.location}</li>
+            <li><strong>Starts:</strong> ${new Date(event.starts_at).toLocaleString()}</li>
+            <li><strong>Capacity:</strong> ${event.capacity}</li>
+            ${event.ga_ticket_price ? `<li><strong>General Price:</strong> RS${event.ga_ticket_price}</li>` : ''}
+            ${event.vip_ticket_price ? `<li><strong>VIP Price:</strong> RS${event.vip_ticket_price}</li>` : ''}
+            ${event.pa_ticket_price ? `<li><strong>Platinum Price:</strong> RS${event.pa_ticket_price}</li>` : ''}
+          </ul>
+          <div class="d-grid gap-2">
+            <button class="btn btn-sm btn-outline-primary" onclick="viewEvent(${event.id})">View Details</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteEvent(${event.id})">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Filter events
+function filterEvents() {
+  loadEvents();
+}
+
+// View single event - GET request
+async function viewEvent(eventId) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/events/${eventId}`);
+    
+    if (response.ok) {
+      const event = await response.json();
+      alert(JSON.stringify(event, null, 2));
+    } else {
+      showAlert('Event not found', 'danger');
+    }
+  } catch (error) {
+    showAlert(`Error: ${error.message}`, 'danger');
+  }
+}
+
+// Delete event - DELETE request
+async function deleteEvent(eventId) {
+  if (!confirm('Are you sure you want to delete this event?')) {
+    return;
+  }
+  
+  try {
+    const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
+      method: 'DELETE'
+    });
+    
+    if (response.ok) {
+      showAlert('Event deleted successfully!', 'success');
+      loadEvents();
+    } else {
+      showAlert('Failed to delete event', 'danger');
+    }
+  } catch (error) {
+    showAlert(`Error: ${error.message}`, 'danger');
+  }
+}
+
+// Search events by title
+async function searchByTitle(keyword) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/events/search/title?keyword=${encodeURIComponent(keyword)}`);
+    if (response.ok) {
+      const events = await response.json();
+      displayEvents(events);
+    }
+  } catch (error) {
+    showAlert(`Error: ${error.message}`, 'danger');
+  }
+}
+
+// Get upcoming events
+async function getUpcomingEvents() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/events/upcoming`);
+    if (response.ok) {
+      const events = await response.json();
+      displayEvents(events);
+    }
+  } catch (error) {
+    showAlert(`Error: ${error.message}`, 'danger');
+  }
+}
+
+// Initialize - Load events on page load
+window.addEventListener('DOMContentLoaded', () => {
+  showCreateForm();
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
