@@ -427,7 +427,489 @@
             </div>
         </div>
     </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ==================== API Configuration ====================
+const API_BASE_URL = 'http://127.0.0.1:8000';
+
+// ==================== Helper Functions ====================
+
+/**
+ * Format date to readable string
+ * @param {string} dateString - ISO date string
+ * @returns {string} Formatted date
+ */
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+        month: 'long', 
+        day: 'numeric', 
+        year: 'numeric' 
+    });
+}
+
+/**
+ * Format time
+ * @param {string} dateString - ISO date string
+ * @returns {string} Formatted time
+ */
+function formatTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', { 
+        hour: 'numeric', 
+        minute: '2-digit',
+        hour12: true 
+    });
+}
+
+/**
+ * Format price
+ * @param {number} price - Price value
+ * @returns {string} Formatted price
+ */
+function formatPrice(price) {
+    return price.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+// ==================== Wishlist Management ====================
+
+/**
+ * Get wishlist from localStorage
+ * @returns {Array} Array of event IDs
+ */
+function getWishlist() {
+    const wishlist = localStorage.getItem('wishlist');
+    return wishlist ? JSON.parse(wishlist) : [];
+}
+
+/**
+ * Save wishlist to localStorage
+ * @param {Array} wishlist - Array of event IDs
+ */
+function saveWishlist(wishlist) {
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+}
+
+/**
+ * Add event to wishlist
+ * @param {number} eventId - Event ID
+ */
+function addToWishlist(eventId) {
+    const wishlist = getWishlist();
+    if (!wishlist.includes(eventId)) {
+        wishlist.push(eventId);
+        saveWishlist(wishlist);
+    }
+}
+
+/**
+ * Remove event from wishlist
+ * @param {number} eventId - Event ID
+ */
+function removeFromWishlist(eventId) {
+    let wishlist = getWishlist();
+    wishlist = wishlist.filter(id => id !== eventId);
+    saveWishlist(wishlist);
+}
+
+/**
+ * Check if event is in wishlist
+ * @param {number} eventId - Event ID
+ * @returns {boolean}
+ */
+function isInWishlist(eventId) {
+    return getWishlist().includes(eventId);
+}
+
+// ==================== Load Wishlist Events ====================
+
+/**
+ * Load wishlist events from API
+ */
+async function loadWishlistEvents() {
+    const wishlist = getWishlist();
+    
+    if (wishlist.length === 0) {
+        showEmptyState();
+        updateWishlistCount(0);
+        return;
+    }
+    
+    try {
+        showLoading();
+        
+        // Fetch all events from wishlist
+        const eventPromises = wishlist.map(eventId => 
+            fetch(`${API_BASE_URL}/events/${eventId}`)
+                .then(res => res.ok ? res.json() : null)
+                .catch(() => null)
+        );
+        
+        const events = await Promise.all(eventPromises);
+        
+        // Filter out null values (deleted or not found events)
+        const validEvents = events.filter(event => event !== null);
+        
+        // Update wishlist to remove deleted events
+        const validEventIds = validEvents.map(e => e.id);
+        saveWishlist(validEventIds);
+        
+        if (validEvents.length === 0) {
+            showEmptyState();
+            updateWishlistCount(0);
+        } else {
+            displayWishlistEvents(validEvents);
+            updateWishlistCount(validEvents.length);
+        }
+        
+    } catch (error) {
+        console.error('Error loading wishlist:', error);
+        showError('Failed to load your wishlist. Please try again.');
+    }
+}
+
+/**
+ * Show loading state
+ */
+function showLoading() {
+    const container = document.querySelector('.row.g-4');
+    container.innerHTML = `
+        <div class="col-12">
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="text-white-50 mt-3">Loading your wishlist...</p>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Show error message
+ * @param {string} message - Error message
+ */
+function showError(message) {
+    const container = document.querySelector('.row.g-4');
+    container.innerHTML = `
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                ${message}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Show empty state
+ */
+function showEmptyState() {
+    const container = document.querySelector('.row.g-4');
+    container.innerHTML = `
+        <div class="col-12">
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-heart"></i>
+                </div>
+                <h3 class="mb-3">Your wishlist is empty</h3>
+                <p class="text-white-50 mb-4">Start adding events you love to your wishlist!</p>
+                <a href="event_list.html" class="btn btn-primary btn-lg">
+                    <i class="bi bi-search me-2"></i>Browse Events
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Display wishlist events
+ * @param {Array} events - Array of event objects
+ */
+function displayWishlistEvents(events) {
+    const container = document.querySelector('.row.g-4');
+    
+    container.innerHTML = events.map(event => {
+        const imageUrl = event.poster_url 
+            ? `${API_BASE_URL}${event.poster_url}` 
+            : 'https://via.placeholder.com/400x300/6c757d/ffffff?text=No+Image';
+        
+        const price = event.ga_ticket_price || event.vip_ticket_price || event.pa_ticket_price || 0;
+        
+        // Check if event is in the past
+        const eventDate = new Date(event.starts_at);
+        const now = new Date();
+        const isPast = eventDate < now;
+        const availabilityBadge = isPast 
+            ? '<span class="badge bg-secondary">Past Event</span>'
+            : '<span class="badge bg-success">Available</span>';
+        
+        return `
+        <div class="col-md-6 col-lg-4" data-event-id="${event.id}">
+            <div class="wishlist-card">
+                <div class="position-relative overflow-hidden">
+                    <img src="${imageUrl}" 
+                         alt="${event.title}"
+                         onerror="this.src='https://via.placeholder.com/400x300/6c757d/ffffff?text=No+Image'">
+                    <span class="badge-category position-absolute top-0 start-0 m-3">${event.category}</span>
+                </div>
+                <div class="p-4">
+                    <h5 class="fw-bold mb-3">${event.title}</h5>
+                    <div class="d-flex align-items-center text-white-50 mb-2">
+                        <i class="bi bi-calendar3 me-2"></i>
+                        <small>${formatDate(event.starts_at)} at ${formatTime(event.starts_at)}</small>
+                    </div>
+                    <div class="d-flex align-items-center text-white-50 mb-3">
+                        <i class="bi bi-geo-alt me-2"></i>
+                        <small>${event.location}</small>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <small class="text-white-50 d-block">Starting from</small>
+                            <h4 class="mb-0 text-primary">Rs ${formatPrice(price)}</h4>
+                        </div>
+                        ${availabilityBadge}
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="event_details.html?id=${event.id}" class="btn btn-primary">
+                            <i class="bi bi-ticket-perforated me-2"></i>Book Now
+                        </a>
+                        <button class="btn btn-remove" onclick="handleRemove(${event.id})">
+                            <i class="bi bi-heart-fill me-2"></i>Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Update wishlist count in header
+ * @param {number} count - Number of items
+ */
+function updateWishlistCount(count) {
+    const countElement = document.querySelector('.text-primary');
+    if (countElement) {
+        countElement.textContent = count;
+    }
+    
+    const headerText = document.querySelector('.bg-primary.bg-opacity-10 h3');
+    if (headerText) {
+        headerText.innerHTML = `<span class="text-primary">${count}</span> Event${count !== 1 ? 's' : ''} Saved`;
+    }
+}
+
+// ==================== Event Handlers ====================
+
+/**
+ * Handle remove from wishlist
+ * @param {number} eventId - Event ID to remove
+ */
+function handleRemove(eventId) {
+    if (confirm('Remove this event from your wishlist?')) {
+        // Remove from wishlist
+        removeFromWishlist(eventId);
+        
+        // Remove card with animation
+        const card = document.querySelector(`[data-event-id="${eventId}"]`);
+        if (card) {
+            card.style.transition = 'all 0.3s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                card.remove();
+                
+                // Check if wishlist is now empty
+                const wishlist = getWishlist();
+                if (wishlist.length === 0) {
+                    showEmptyState();
+                }
+                
+                updateWishlistCount(wishlist.length);
+                showToast('Event removed from wishlist', 'success');
+            }, 300);
+        }
+    }
+}
+
+/**
+ * Clear all wishlist items
+ */
+function clearAllWishlist() {
+    const wishlist = getWishlist();
+    
+    if (wishlist.length === 0) {
+        showToast('Your wishlist is already empty', 'info');
+        return;
+    }
+    
+    if (confirm(`Remove all ${wishlist.length} events from your wishlist?`)) {
+        saveWishlist([]);
+        showEmptyState();
+        updateWishlistCount(0);
+        showToast('Wishlist cleared successfully', 'success');
+    }
+}
+
+// ==================== Filter and Sort ====================
+
+/**
+ * Filter wishlist events
+ */
+function filterWishlist() {
+    // Implement filter logic
+    showToast('Filter feature coming soon!', 'info');
+}
+
+/**
+ * Sort wishlist events
+ */
+function sortWishlist() {
+    // Implement sort logic
+    showToast('Sort feature coming soon!', 'info');
+}
+
+// ==================== Toast Notifications ====================
+
+/**
+ * Show toast notification
+ * @param {string} message - Message to display
+ * @param {string} type - Toast type (success, error, info, warning)
+ */
+function showToast(message, type = 'success') {
+    const bgColors = {
+        success: 'rgba(40, 167, 69, 0.2)',
+        error: 'rgba(220, 53, 69, 0.2)',
+        info: 'rgba(13, 202, 240, 0.2)',
+        warning: 'rgba(255, 193, 7, 0.2)'
+    };
+    
+    const borderColors = {
+        success: 'rgba(40, 167, 69, 0.5)',
+        error: 'rgba(220, 53, 69, 0.5)',
+        info: 'rgba(13, 202, 240, 0.5)',
+        warning: 'rgba(255, 193, 7, 0.5)'
+    };
+    
+    const icons = {
+        success: 'check-circle',
+        error: 'exclamation-triangle',
+        info: 'info-circle',
+        warning: 'exclamation-triangle'
+    };
+    
+    const toast = document.createElement('div');
+    toast.className = 'position-fixed top-0 start-50 translate-middle-x mt-3';
+    toast.style.zIndex = '9999';
+    toast.innerHTML = `
+        <div class="alert alert-dismissible fade show" role="alert" 
+             style="background: ${bgColors[type]}; border: 1px solid ${borderColors[type]}; 
+                    color: #fff; border-radius: 12px; backdrop-filter: blur(10px);">
+            <i class="bi bi-${icons[type]} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+// ==================== Navbar Scroll Effect ====================
+
+/**
+ * Add scroll effect to navbar
+ */
+function initNavbarScroll() {
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        
+        if (window.scrollY > 50) {
+            navbar.style.background = 'rgba(15, 1, 24, 0.98)';
+            navbar.style.boxShadow = '0 5px 30px rgba(0, 0, 0, 0.3)';
+        } else {
+            navbar.style.background = 'rgba(15, 1, 24, 0.95)';
+            navbar.style.boxShadow = 'none';
+        }
+    });
+}
+
+// ==================== Mobile Menu Handler ====================
+
+/**
+ * Close mobile menu when clicking nav links
+ */
+function initMobileMenu() {
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            
+            if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+                const bsCollapse = new bootstrap.Collapse(navbarCollapse);
+                bsCollapse.hide();
+            }
+        });
+    });
+}
+
+// ==================== Initialize Event Listeners ====================
+
+/**
+ * Initialize all event listeners
+ */
+function initEventListeners() {
+    // Filter button
+    const filterBtn = document.querySelector('.btn-outline-light:has(.bi-funnel)');
+    if (filterBtn) {
+        filterBtn.addEventListener('click', filterWishlist);
+    }
+    
+    // Sort button
+    const sortBtn = document.querySelector('.btn-outline-light:has(.bi-sort-down)');
+    if (sortBtn) {
+        sortBtn.addEventListener('click', sortWishlist);
+    }
+    
+    // Clear all button
+    const clearBtn = document.querySelector('.btn-outline-danger:has(.bi-trash)');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearAllWishlist);
+    }
+}
+
+// ==================== Initialize Page ====================
+
+/**
+ * Main initialization function
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎵 Initializing Wishlist Page...');
+    
+    // Load wishlist events
+    loadWishlistEvents();
+    
+    // Initialize navbar scroll
+    initNavbarScroll();
+    
+    // Initialize mobile menu
+    initMobileMenu();
+    
+    // Initialize event listeners
+    initEventListeners();
+    
+    console.log('✅ Wishlist page initialized!');
+});
+
+// Make handleRemove available globally
+window.handleRemove = handleRemove;
+    </script>
 </body>
 </html>
