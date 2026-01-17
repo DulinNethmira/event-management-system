@@ -16,36 +16,33 @@ app = FastAPI(
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify exact origins
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"], 
     allow_headers=["*"],  
 )
 
-# Create upload directories
 upload_dir = Path("uploads")
 event_posters_dir = upload_dir / "event_posters"
 event_posters_dir.mkdir(parents=True, exist_ok=True)
 
-# Mount static files to serve uploaded images
+
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
-# Startup event - Create database tables
 @app.on_event("startup")
 def startup_event():
     print("=" * 50)
-    print("🚀 Starting EMS Backend...")
+    print("Starting EMS Backend..............")
     print("=" * 50)
-    print("📦 Creating database tables...")
+    print("Creating database tables............")
     Base.metadata.create_all(bind=engine)
-    print("✅ Database tables created successfully!")
-    print(f"📁 Upload directory: {event_posters_dir.absolute()}")
+    print(" Database tables created successfully!")
+    print(f"Upload directory: {event_posters_dir.absolute()}")
     print("=" * 50)
 
-# Include routers
+
 app.include_router(events.router)
 
-# Root endpoint
 @app.get("/")
 def root():
     return {
@@ -55,7 +52,6 @@ def root():
         "redoc": "/redoc"
     }
 
-# Health check endpoint
 @app.get("/health")
 def health_check():
     return {
