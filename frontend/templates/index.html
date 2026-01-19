@@ -523,28 +523,14 @@
                     View All <i class="bi bi-arrow-right ms-2"></i>
                 </a>
             </div>
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="event-card">
-                        <div class="position-relative">
-                            <img src="../static/img/e-2.jpg" alt="Summer Rock Festival">
-                            <span class="badge-category">Rock</span>
+            <div class="row g-4" id="featuredEventsContainer">
+                <!-- Events will be loaded here dynamically -->
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
-                        <div class="p-4">
-                            <h4 class="fw-bold mb-3">Summer Rock Festival</h4>
-                            <div class="d-flex align-items-center text-white-50 mb-2">
-                                <i class="bi bi-calendar3 me-2"></i>
-                                <small>August 15, 2024</small>
-                            </div>
-                            <div class="d-flex align-items-center text-white-50 mb-3">
-                                <i class="bi bi-geo-alt me-2"></i>
-                                <small>Arena Stadium</small>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                                <span class="h4 mb-0 gradient-text">RS 2,500</span>
-                                <a href="event_details.html" class="btn btn-primary">Book Now</a>
-                            </div>
-                        </div>
+                        <p class="text-white-50 mt-3">Loading featured events...</p>
                     </div>
                 </div>
             </div>
@@ -672,17 +658,13 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-   
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
     <script>
-        AOS.init({
-            duration: 1000,
-            once: true,
-            offset: 100
-        });
-
+        // ==================== API Configuration ====================
         const API_BASE_URL = 'http://127.0.0.1:8000';
 
+        // ==================== Format Functions ====================
         function formatDate(dateString) {
             const date = new Date(dateString);
             return date.toLocaleDateString('en-US', { 
@@ -702,68 +684,51 @@
         // ==================== Load Featured Events ====================
         async function loadFeaturedEvents() {
             try {
-                // Fetch upcoming published events
-                const response = await fetch(`${API_BASE_URL}/events/upcoming?limit=6`);
+                console.log('🔄 Loading featured events...');
+                
+                // Fetch all events
+                const response = await fetch(`${API_BASE_URL}/events/`);
                 
                 if (!response.ok) {
                     throw new Error('Failed to fetch events');
                 }
                 
                 const events = await response.json();
+                console.log('📦 Received events:', events.length);
                 
-                // Display events if we have any
                 if (events && events.length > 0) {
                     displayFeaturedEvents(events);
                 } else {
-                    // Try to get any published events if no upcoming events
-                    await loadPublishedEvents();
+                    showEmptyState();
                 }
                 
             } catch (error) {
-                console.error('Error loading featured events:', error);
-                // Keep static content if API fails
-                console.log('Using static content as fallback');
+                console.error('❌ Error loading featured events:', error);
+                showErrorState();
             }
         }
 
-        /**
-         * Load published events as fallback
-         */
-        async function loadPublishedEvents() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/events/?status=PUBLISHED&limit=6`);
-                
-                if (!response.ok) return;
-                
-                const events = await response.json();
-                
-                if (events && events.length > 0) {
-                    displayFeaturedEvents(events);
-                }
-                
-            } catch (error) {
-                console.error('Error loading published events:', error);
-            }
-        }
-
+        // ==================== Display Featured Events ====================
         function displayFeaturedEvents(events) {
-            const container = document.querySelector('#featuredEvents .row');
+            const container = document.getElementById('featuredEventsContainer');
             
-            if (!container) return;
+            if (!container) {
+                console.error('❌ Featured events container not found');
+                return;
+            }
             
-            // Limit to 6 events for homepage
-            const featuredEvents = events.slice(0, 6);
+            // Sort by ID (newest first) and limit to 3
+            const sortedEvents = events.sort((a, b) => b.id - a.id);
+            const featuredEvents = sortedEvents.slice(0, 3);
+            
+            console.log('✅ Displaying', featuredEvents.length, 'featured events');
             
             container.innerHTML = featuredEvents.map((event, index) => {
-                // Construct image URL
                 const imageUrl = event.poster_url 
                     ? `${API_BASE_URL}${event.poster_url}` 
-                    : 'https://via.placeholder.com/400x300/6c757d/ffffff?text=Event+Image';
+                    : '../static/img/e-2.jpg';
                 
-                // Get lowest ticket price
                 const price = event.ga_ticket_price || event.vip_ticket_price || event.pa_ticket_price || 0;
-                
-                // Calculate animation delay
                 const delay = (index + 1) * 100;
                 
                 return `
@@ -771,9 +736,9 @@
                     <div class="event-card">
                         <div class="position-relative overflow-hidden">
                             <img src="${imageUrl}" 
-                                alt="${event.title}"
-                                onerror="this.src='https://via.placeholder.com/400x300/6c757d/ffffff?text=No+Image'">
-                            <span class="badge-category">${event.category}</span>
+                                 alt="${event.title}"
+                                 onerror="this.src='../static/img/e-2.jpg'">
+                            <span class="badge-category">${event.category || 'Event'}</span>
                         </div>
                         <div class="p-4">
                             <h4 class="fw-bold mb-3">${event.title}</h4>
@@ -795,48 +760,66 @@
                 `;
             }).join('');
             
-            // Refresh AOS animations for new content
-            AOS.refresh();
+            if (typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
+        }
+
+        // ==================== Show Error State ====================
+        function showErrorState() {
+            const container = document.getElementById('featuredEventsContainer');
+            if (!container) return;
+            
+            container.innerHTML = `
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="bi bi-exclamation-triangle display-1 text-warning mb-3"></i>
+                        <h4 class="text-white-50">Unable to load events</h4>
+                        <p class="text-white-50">Please check your connection and try again</p>
+                        <button class="btn btn-primary mt-3" onclick="loadFeaturedEvents()">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Retry
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== Show Empty State ====================
+        function showEmptyState() {
+            const container = document.getElementById('featuredEventsContainer');
+            if (!container) return;
+            
+            container.innerHTML = `
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="bi bi-calendar-x display-1 text-white-50 mb-3"></i>
+                        <h4 class="text-white-50">No events available</h4>
+                        <p class="text-white-50">Check back soon for upcoming events</p>
+                    </div>
+                </div>
+            `;
         }
 
         // ==================== Load Statistics ====================
-
         async function loadStatistics() {
             try {
-                // Fetch total events count
-                const eventsResponse = await fetch(`${API_BASE_URL}/events/?limit=1000`);
+                const response = await fetch(`${API_BASE_URL}/events/`);
                 
-                if (eventsResponse.ok) {
-                    const events = await eventsResponse.json();
+                if (response.ok) {
+                    const events = await response.json();
                     
-                    // Update stats with real data
-                    updateStatNumber(0, events.length, '500+');
-                    
-                    // Calculate other statistics from events data
-                    const totalCapacity = events.reduce((sum, event) => sum + (event.capacity || 0), 0);
-                    updateStatNumber(1, Math.floor(totalCapacity / 100) * 100, '50K+');
+                    const eventStat = document.querySelectorAll('.stat-number')[0];
+                    if (eventStat && events.length > 0) {
+                        animateNumber(eventStat, events.length);
+                    }
                 }
-                
             } catch (error) {
                 console.error('Error loading statistics:', error);
-                // Keep static stats if API fails
             }
         }
 
-        function updateStatNumber(index, target, fallback) {
-            const statElements = document.querySelectorAll('.stat-number');
-            
-            if (!statElements[index]) return;
-            
-            const element = statElements[index];
-            
-            // Don't animate if target is 0 or invalid
-            if (!target || target === 0) {
-                element.textContent = fallback;
-                return;
-            }
-            
-            // Animate the number
+        // ==================== Animate Numbers ====================
+        function animateNumber(element, target) {
             let current = 0;
             const increment = target / 50;
             const duration = 2000;
@@ -855,26 +838,23 @@
         }
 
         // ==================== Navbar Scroll Effect ====================
-
-        /**
-         * Add scroll effect to navbar
-         */
         function initNavbarScroll() {
             window.addEventListener('scroll', function() {
                 const navbar = document.querySelector('.navbar');
                 
-                if (window.scrollY > 50) {
-                    navbar.style.background = 'rgba(15, 1, 24, 0.98)';
-                    navbar.style.boxShadow = '0 5px 30px rgba(0, 0, 0, 0.3)';
-                } else {
-                    navbar.style.background = 'rgba(15, 1, 24, 0.95)';
-                    navbar.style.boxShadow = 'none';
+                if (navbar) {
+                    if (window.scrollY > 50) {
+                        navbar.style.background = 'rgba(15, 1, 24, 0.98)';
+                        navbar.style.boxShadow = '0 5px 30px rgba(0, 0, 0, 0.3)';
+                    } else {
+                        navbar.style.background = 'rgba(15, 1, 24, 0.95)';
+                        navbar.style.boxShadow = 'none';
+                    }
                 }
             });
         }
 
         // ==================== Mobile Menu Handler ====================
-
         function initMobileMenu() {
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.addEventListener('click', () => {
@@ -888,114 +868,31 @@
             });
         }
 
-        // ==================== Smooth Scroll ====================
-
-        /**
-         * Add smooth scrolling to anchor links
-         */
-        function initSmoothScroll() {
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    const href = this.getAttribute('href');
-                    
-                    if (href === '#' || href === '#!') return;
-                    
-                    e.preventDefault();
-                    
-                    const target = document.querySelector(href);
-                    
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-        }
-
-        // ==================== Add Featured Events Section ====================
-
-        /**
-         * Create featured events section if it doesn't exist
-         */
-        function ensureFeaturedEventsSection() {
-            // Check if section already exists
-            let section = document.querySelector('#featuredEvents');
-            
-            if (!section) {
-                // Find the existing featured events section
-                const existingSection = Array.from(document.querySelectorAll('section')).find(s => 
-                    s.textContent.includes('Featured Events')
-                );
-                
-                if (existingSection) {
-                    existingSection.id = 'featuredEvents';
-                }
-            }
-        }
-
-        // ==================== Event Category Counter ====================
-
-        /**
-         * Count and display events by category
-         */
-        async function updateCategoryInsights() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/events/?limit=1000`);
-                
-                if (!response.ok) return;
-                
-                const events = await response.json();
-                
-                // Count events by category
-                const categories = events.reduce((acc, event) => {
-                    acc[event.category] = (acc[event.category] || 0) + 1;
-                    return acc;
-                }, {});
-                
-                console.log('Events by category:', categories);
-                
-            } catch (error) {
-                console.error('Error loading category insights:', error);
-            }
-        }
-
         // ==================== Initialize Everything ====================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Initializing Infinity Events Homepage...');
             
-            // Ensure featured events section has ID
-            ensureFeaturedEventsSection();
+            // Initialize AOS animations
+            AOS.init({
+                duration: 1000,
+                once: true,
+                offset: 100
+            });
             
-            // Load featured events from API
+            // Load featured events
             loadFeaturedEvents();
             
             // Load statistics
             loadStatistics();
             
-            // Get category insights
-            updateCategoryInsights();
-            
-            // Initialize navbar scroll effect
+            // Initialize navbar scroll
             initNavbarScroll();
             
             // Initialize mobile menu
             initMobileMenu();
             
-            // Initialize smooth scrolling
-            initSmoothScroll();
-            
             console.log('✅ Homepage initialized successfully!');
         });
-
-        // // ==================== Optional: Auto-refresh Events ====================
-        // function startAutoRefresh() {
-        //     setInterval(() => {
-        //         console.log('🔄 Refreshing featured events...');
-        //         loadFeaturedEvents();
-        //     },  60 * 1000); // 5 minutes
-        // }
     </script>
 </body>
 </html>

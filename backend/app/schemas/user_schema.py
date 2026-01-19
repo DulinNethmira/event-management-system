@@ -5,11 +5,12 @@ class UserRole(str, Enum):
     ADMIN = "ADMIN"
     CUSTOMER = "CUSTOMER"
 
-
 class UserBase(BaseModel):
     email: EmailStr
     first_name: str
     last_name: str
+    email: EmailStr
+    # phone_number: str | None = None
     role: UserRole
 
 class UserCreate(UserBase):

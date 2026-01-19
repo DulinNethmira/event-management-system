@@ -3,8 +3,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from app.routes import events
+from app.routes import user_router as User
 from app.core.database import Base, engine
-from app.models.user import User
 from app.models.event import Event
 
 app = FastAPI(
@@ -42,6 +42,7 @@ def startup_event():
 
 
 app.include_router(events.router)
+app.include_router(User.router)
 
 @app.get("/")
 def root():
