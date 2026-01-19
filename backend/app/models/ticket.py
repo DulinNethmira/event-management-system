@@ -27,7 +27,6 @@ class Ticket(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    # Relationships
     requester: Mapped["User"] = relationship("User", foreign_keys=[requester_id], back_populates="tickets")
     assignee: Mapped["User"] = relationship("User", foreign_keys=[assignee_id], back_populates="assigned_tickets")
     comments: Mapped[list["TicketComment"]] = relationship("TicketComment", back_populates="ticket", cascade="all, delete-orphan")

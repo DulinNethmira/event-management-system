@@ -28,7 +28,7 @@ class EventBase(BaseModel):
     ga_ticket_price: Optional[float] = None
     vip_ticket_price: Optional[float] = None
     pa_ticket_price: Optional[float] = None
-    poster_url: Optional[str] = None  # Added poster_url
+    poster_url: Optional[str] = None
 
 class EventCreate(EventBase):
     organizer_id: int

@@ -11,7 +11,12 @@ from app.crud import event_crud
 from app.schemas.event_schema import EventCreate, EventUpdate, EventResponse
 from app.models import EventStatus, Category
 import json
+
+
+
 router = APIRouter(prefix="/events", tags=["events"])
+
+
 UPLOAD_DIR = Path("uploads/event_posters")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -25,7 +30,6 @@ async def create_event(
     
     try:
         event_dict = json.loads(event_data)
-        
         # Handle image upload if provided
         poster_url = None
         if poster_image and poster_image.filename:
